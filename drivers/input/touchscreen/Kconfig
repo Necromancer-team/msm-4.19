@@ -1367,4 +1367,9 @@ source "drivers/input/touchscreen/focaltech_touch/Kconfig"
 
 source "drivers/input/touchscreen/nt36xxx/Kconfig"
 
+config TOUCHSCREEN_IST30XX
+	tristate "IMAGES touchpanel IST30XX series"
+	depends on I2C
+
+source "drivers/input/touchscreen/IST30xx/Kconfig"
 endif
