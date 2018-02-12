@@ -24,6 +24,10 @@
 	dpdm-supply = <&usb_otg>;
 };
 
+&usb_otg {
+	extcon = <&qpnp_smbcharger>;
+};
+
 &sdhc_1 {
 	/* device core power supply */
 	vdd-supply = <&pm8937_l8>;
