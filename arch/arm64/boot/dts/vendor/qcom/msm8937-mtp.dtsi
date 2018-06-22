@@ -20,6 +20,10 @@
 	pinctrl-0 = <&uart_console_active>;
 };
 
+&qpnp_smbcharger {
+	dpdm-supply = <&usb_otg>;
+};
+
 &sdhc_1 {
 	/* device core power supply */
 	vdd-supply = <&pm8937_l8>;
