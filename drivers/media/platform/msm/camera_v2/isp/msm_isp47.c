@@ -1935,7 +1935,8 @@ void msm_vfe47_cfg_axi_ub_equal_default(
 	/* calculate propotional ub for all wm */
 	prop_size = vfe_ub_size - min_ub;
 	for (i = 0; i < axi_data->hw_info->num_wm; i++) {
-		if (!axi_data->free_wm[i]) {
+		if (!axi_data->free_wm[i] || frame_src != SRC_TO_INTF(
+				HANDLE_TO_IDX(axi_data->free_wm[i]))) {
 			msm_camera_io_w(0,
 				vfe_dev->vfe_base +
 				vfe_dev->hw_info->vfe_ops.axi_ops.ub_reg_offset(
