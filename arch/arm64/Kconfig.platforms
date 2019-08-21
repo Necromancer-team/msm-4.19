@@ -148,12 +148,17 @@ config ARCH_QCOM
 	select MFD_CORE
 	select SND_SOC_COMPRESS
 	select SND_HWDEP
+	select CLKDEV_LOOKUP
+	select HAVE_CLK
+	select HAVE_CLK_PREPARE
+	select PM_OPP
 	help
 	  This enables support for the ARMv8 based Qualcomm chipsets.
 
 config ARCH_KONA
 	bool "Enable Support for Qualcomm Technologies, Inc. KONA"
 	depends on ARCH_QCOM
+	select COMMON_CLK
 	select COMMON_CLK_QCOM
 	help
 	  This enables support for the KONA chipset. If you do not
@@ -170,6 +175,7 @@ config ARCH_LITO
 config ARCH_LAGOON
 	bool "Enable Support for Qualcomm Technologies, Inc. LAGOON"
 	depends on ARCH_QCOM
+	select COMMON_CLK
 	select COMMON_CLK_QCOM
 	help
 	  This enables support for the LAGOON chipset. If you do not
@@ -178,6 +184,7 @@ config ARCH_LAGOON
 config ARCH_BENGAL
 	bool "Enable Support for Qualcomm Technologies, Inc. BENGAL"
 	depends on ARCH_QCOM
+	select COMMON_CLK
 	select COMMON_CLK_QCOM
 	help
 	  This enables support for the BENGAL chipset. If you do not
@@ -186,6 +193,7 @@ config ARCH_BENGAL
 config ARCH_KHAJE
 	bool "Enable Support for Qualcomm Technologies, Inc. KHAJE"
 	depends on ARCH_QCOM
+	select COMMON_CLK
 	select COMMON_CLK_QCOM
 	help
 	  This enables support for the KHAJE chipset. If you do not
@@ -194,6 +202,7 @@ config ARCH_KHAJE
 config ARCH_SCUBA
 	bool "Enable Support for Qualcomm Technologies, Inc. SCUBA"
 	depends on ARCH_QCOM
+	select COMMON_CLK
 	select COMMON_CLK_QCOM
 	help
 	  This enables support for the SCUBA chipset. If you do not
