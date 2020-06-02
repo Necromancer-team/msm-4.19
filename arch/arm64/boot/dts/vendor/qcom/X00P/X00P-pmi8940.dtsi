@@ -1,0 +1,99 @@
+/*
+ * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 and
+ * only version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
+#include <dt-bindings/msm/power-on.h>
+
+&spmi_bus {
+
+	qcom,pmi8940@2 {
+
+		pmi8940_vadc: vadc@3100 {
+
+			chan@10 {
+				label = "mpp1";
+				reg = <0x10>;
+				qcom,decimation = <0>;
+				qcom,pre-div-channel-scaling = <0>;
+				qcom,calibration-type = "absolute";
+				qcom,scale-function = <0>;  //0
+				qcom,hw-settle-time = <4>;
+				qcom,fast-avg-setup = <2>;
+			};
+		};
+
+		pmi8940_mpps: mpps {
+
+			mpp@a000 {
+				qcom,mode = <4>;
+				qcom,src-sel = <0>;
+				qcom,ain-route = <0>;
+				qcom,master-en = <1>;
+				status = "okay"; 
+			};
+
+		};
+
+		pmi8940_charger: qcom,qpnp-smbcharger {
+			qcom,float-voltage-mv = <4350>;
+			/delete-property/ qcom,autoadjust-vfloat;
+			qcom,usbin-vadc = <&pmi8940_vadc>;
+			qcom,jeita-temp-hard-limit =<1>;
+			qcom,mpp1-vadc = <&pmi8940_vadc>;	
+		};
+
+		pmi8940_fg: qcom,fg {
+			qcom,resume-soc = <98>;
+			qcom,fg-iterm-ma = <240>;
+			qcom,fg-chg-iterm-ma = <150>;
+			qcom,fg-cutoff-voltage-mv = <3400>;
+			qcom,irq-volt-empty-mv = <3000>;
+			qcom,fg-cc-cv-threshold-mv = <4330>;
+			qcom,hot-bat-decidegc = <600>;
+			qcom,cold-bat-decidegc = <0>;
+			qcom,warm-bat-decidegc = <600>;
+			qcom,cool-bat-decidegc = <0>;
+		};
+
+		qcom,leds@a100 {
+
+			qcom,led_mpp_2 {
+				label = "mpp";
+				linux,name = "green";
+				qcom,max-current = <40>; 
+				qcom,id = <6>;
+				qcom,current-setting = <5>; 
+				qcom,source-sel = <8>;
+				qcom,mode-ctrl = <0x60>;
+				qcom,mode = "pwm";
+				pwms = <&pmi8940_pwm 0 0>;
+				qcom,pwm-us = <10000>; 
+				qcom,pwm-channel = <0>;
+				linux,default-trigger = "none";  
+				qcom,default-state = "off";  
+				pwm-names = "green";
+			};
+		};
+	};
+
+	qcom,pmi8940@3 {
+
+		pmi8940_pwm: pwm@b000 {
+			qcom,dtest-line = <1>;
+			qcom,dtest-output = <1>;
+		};
+
+		wled: qcom,leds@d800 {
+			/delete-property/qcom,en-ext-pfet-sc-pro;
+		};
+	};
+};

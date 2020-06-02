@@ -379,6 +379,7 @@ endif
 dtb-$(CONFIG_MACH_XIAOMI_LAND) := xiaomi/msm8937-wt88537.dtb
 dtb-$(CONFIG_MACH_XIAOMI_SANTONI) += xiaomi/msm8940-wt88536.dtb
 dtb-$(CONFIG_MACH_XIAOMI_ROLEX) += msm8917-rolex-overlay.dtb
+dtb-$(CONFIG_ARCH_MSM8937) += msm8937-pmi8940-X00P.dtb
 
 always		:= $(dtb-y)
 subdir-y	:= $(dts-dirs)
