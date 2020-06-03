@@ -14,9 +14,9 @@
 /dts-v1/;
 
 #include "msm8937.dtsi"
-#include "msm-pmi8940.dtsi"
+#include "pmi8940.dtsi"
 #include "msm8937-mtp.dtsi"
-#include "msm8937-audio-mtp.dtsi"
+#include "msm8937-audio.dtsi"
 
 / {
         model = "Qualcomm Technologies, Inc. MSM8937-PMI8940 MTP";
@@ -24,6 +24,9 @@
         qcom,board-id= <8 0>;
         qcom,pmic-id = <0x10019 0x020040 0x0 0x0>;
 };
+
+#include "msm8937-mdss-panels.dtsi"
+#include "msm8937-camera-sensor-mtp.dtsi"
 
 &soc {
 	led_flash0: qcom,camera-flash@0 {
@@ -47,7 +50,7 @@
 	};
 };
 
-&pmi8940_charger {
+&qpnp_smbcharger {
 	qcom,battery-data = <&mtp_batterydata>;
 	qcom,chg-led-sw-controls;
 	qcom,chg-led-support;
@@ -101,7 +104,7 @@
 	};
 };
 
-&pmi8940_fg {
+&qpnp_fg {
 	qcom,battery-data = <&mtp_batterydata>;
 };
 
