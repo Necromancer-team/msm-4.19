@@ -22801,6 +22801,13 @@ static const struct snd_kcontrol_new pcm_rx_switch_mixer_controls =
 	0, 1, 0, msm_routing_get_fm_pcmrx_switch_mixer,
 	msm_routing_put_fm_pcmrx_switch_mixer);
 
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+static const struct snd_kcontrol_new ulysse_quat_mi2s_fm_rx_switch_mixer_controls =
+	SOC_SINGLE_EXT("Switch", SND_SOC_NOPM,
+	0, 1, 0, msm_routing_get_quat_mi2s_switch_mixer,
+	msm_routing_put_quat_mi2s_switch_mixer);
+#endif
+
 static const struct snd_kcontrol_new hfp_pri_aux_switch_mixer_controls =
 	SOC_SINGLE_EXT("Switch", SND_SOC_NOPM,
 	0, 1, 0, msm_routing_get_hfp_switch_mixer,
@@ -25101,6 +25108,10 @@ static const struct snd_soc_dapm_widget msm_qdsp6_widgets_mi2s[] = {
 				&quat_mi2s_rx_switch_mixer_controls),
 	SND_SOC_DAPM_SWITCH("QUIN_MI2S_RX_DL_HL", SND_SOC_NOPM, 0, 0,
 				&quin_mi2s_rx_switch_mixer_controls),
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+	SND_SOC_DAPM_SWITCH("QUAT_MI2S_FM_RX_DL_HL", SND_SOC_NOPM, 0, 0,
+				&ulysse_quat_mi2s_fm_rx_switch_mixer_controls),
+#endif
 	SND_SOC_DAPM_SWITCH("SEN_MI2S_RX_DL_HL", SND_SOC_NOPM, 0, 0,
 				&sen_mi2s_rx_switch_mixer_controls),
 
@@ -30345,7 +30356,13 @@ static const struct snd_soc_dapm_route intercon_mi2s[] = {
 	{"TERT_MI2S_RX", NULL, "TERT_MI2S_RX_DL_HL"},
 
 	{"QUAT_MI2S_RX_DL_HL", "Switch", "QUAT_MI2S_DL_HL"},
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+    	{"QUAT_MI2S_FM_RX_DL_HL", "Switch", "PRI_MI2S_DL_HL"},
+#endif
 	{"QUAT_MI2S_RX", NULL, "QUAT_MI2S_RX_DL_HL"},
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+    	{"QUAT_MI2S_RX", NULL, "QUAT_MI2S_FM_RX_DL_HL"},
+#endif
 	{"QUIN_MI2S_RX_DL_HL", "Switch", "QUIN_MI2S_DL_HL"},
 	{"QUIN_MI2S_RX", NULL, "QUIN_MI2S_RX_DL_HL"},
 	{"SEN_MI2S_RX_DL_HL", "Switch", "SEN_MI2S_DL_HL"},
