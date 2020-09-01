@@ -63,6 +63,7 @@ extern int xiaomi_series_read(void);
 #define SPK_PMU 3
 
 #define MICBIAS_DEFAULT_VAL 1800000
+int micbias_default_val = MICBIAS_DEFAULT_VAL;
 #define MICBIAS_MIN_VAL 1600000
 #define MICBIAS_STEP_SIZE 50000
 
@@ -1340,7 +1341,7 @@ static void msm_anlg_cdc_dt_parse_micbias_info(struct device *dev,
 	if (ret) {
 		dev_dbg(dev, "Looking up %s property in node %s failed",
 			prop_name, dev->of_node->full_name);
-		micbias->cfilt1_mv = MICBIAS_DEFAULT_VAL;
+		micbias->cfilt1_mv = micbias_default_val;
 	}
 }
 
@@ -4203,6 +4204,9 @@ EXPORT_SYMBOL(msm_anlg_cdc_hs_detect_exit);
 void msm_anlg_cdc_update_int_spk_boost(bool enable)
 {
 	pr_debug("%s: enable = %d\n", __func__, enable);
+#if defined(CONFIG_MACH_XIAOMI_ROVA) || defined(CONFIG_MACH_XIAOMI_TIARE)
+	if (xiaomi_series_read() != XIAOMI_SERIES_ROVA)
+#endif
 	spkr_boost_en = enable;
 }
 EXPORT_SYMBOL(msm_anlg_cdc_update_int_spk_boost);
@@ -4851,6 +4855,13 @@ static int msm_anlg_cdc_probe(struct platform_device *pdev)
 	struct sdm660_cdc_priv *sdm660_cdc = NULL;
 	struct sdm660_cdc_pdata *pdata;
 	int adsp_state;
+
+#if defined(CONFIG_MACH_XIAOMI_ROVA) || defined(CONFIG_MACH_XIAOMI_TIARE)
+	if (xiaomi_series_read() == XIAOMI_SERIES_ROVA) {
+		micbias_default_val = 2400000;
+		spkr_boost_en = false;
+	}
+#endif
 
 	adsp_state = apr_get_subsys_state();
 	if (adsp_state != APR_SUBSYS_LOADED ||
