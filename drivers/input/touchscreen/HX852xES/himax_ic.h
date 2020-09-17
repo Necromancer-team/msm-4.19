@@ -73,6 +73,11 @@ enum fw_image_type
 int himax_hand_shaking(struct i2c_client *client);
 void himax_set_SMWP_enable(struct i2c_client *client,uint8_t SMWP_enable, bool suspended);
 void himax_set_HSEN_enable(struct i2c_client *client,uint8_t HSEN_enable, bool suspended);
+
+// wangbing@wind-mobi.com 20180529 begin >>> [5/5] modify the i2c transform times
+void himax_set_work_status(struct i2c_client *client, uint8_t SMWP_enable, uint8_t HSEN_enable, bool suspended);
+// wangbing@wind-mobi.com 20180529 end   <<< [5/5] modify the i2c transform times
+
 void himax_usb_detect_set(struct i2c_client *client,uint8_t *cable_config);
 int himax_determin_diag_rawdata(int diag_command);
 int himax_determin_diag_storage(int diag_command);

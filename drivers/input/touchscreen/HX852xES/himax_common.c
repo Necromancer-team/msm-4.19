@@ -43,7 +43,7 @@ unsigned char i_CTPM_FW[]=
 unsigned char YKL_PANDA_ILI9881_HX8527[]=
 {
 // wangjun@wimd-mobi.com 20180301 begin
-#include "EK55M_YJ_ASUS_E300_CID330C_C32_20180424.i"
+#include "EK55M_YJ_ASUS_E300_CID3702_C33_06082018.i"
 // wangjun@wimd-mobi.com 20180301 end
 };
 
@@ -52,10 +52,17 @@ unsigned char YKL_PANDA_ILI9881_HX8527[]=
 unsigned char LC_BOE_ST7730_HX8527[]=
 {
 // wangjun@wimd-mobi.com 20180301 begin
-#include "LC_LTFBF0551536_ASUS_E300_C05_2018-04-20.i"
+#include "LC_LTFBF0551536_ASUS_CID3700_E300_C06_05302018.i"
 // wangjun@wimd-mobi.com 20180301 end
 };
 
+// qcom,mdss-dsi-panel-name = "dsi_boe66_st7703_720p_video";
+unsigned char LC_BOE66_ST7730_HX8527[]=
+{
+// zhaopengfei@wimd-mobi.com 20180925 begin	>>TP6_FW_UPDATE
+#include "LTFBF0551536_LC_ASUS_A306_CID3702_5A_C35_0903-040630.i"
+// zhaopengfei@wimd-mobi.com 20180925 end	>>TP6_FW_UPDATE
+};
 // wangjun@wind-mobi.com 20180314 end
 
 
@@ -63,8 +70,8 @@ unsigned char LC_BOE_ST7730_HX8527[]=
 
 //hebiao@wind-mobi.com 20171127 begin
 #ifdef CONFIG_WIND_DEVICE_INFO
-#include "wind_device_info.h"
-extern wind_device_info_t wind_device_info;
+//#include "wind_device_info.h"
+//extern wind_device_info_t wind_device_info;
 #endif
 //hebiao@wind-mobi.com 20171127 end
 
@@ -370,6 +377,11 @@ static int i_update_FW(void)
         ImageBuffer = YKL_PANDA_ILI9881_HX8527;
         fullFileLength = sizeof(YKL_PANDA_ILI9881_HX8527);
         printk("[wjwind] current Update = %s\n",caPanelName);
+    }else if(!strcmp("dsi_boe66_st7703_720p_video",caPanelName))
+    {
+        ImageBuffer = LC_BOE66_ST7730_HX8527;
+        fullFileLength = sizeof(LC_BOE66_ST7730_HX8527);
+        printk("[wjwind] current Update = %s\n",caPanelName);
     }
     else
     {
@@ -418,7 +430,12 @@ update_retry:
         ic_data->vendor_fw_ver = g_i_FW_VER;
         ic_data->vendor_config_ver = g_i_CFG_VER;
         result = 1;//upgrade success
-        sprintf(wind_device_info.ctp_module_info.fwvr, "0x%x", ic_data->vendor_config_ver);
+        //sprintf(wind_device_info.ctp_module_info.fwvr, "0x%x", ic_data->vendor_config_ver);
+	if(!strcmp("dsi_boe66_st7703_720p_video", caPanelName)) {
+        //wind_device_info.ctp_module_info.vendor = 0x05;
+        //sprintf(wind_device_info.ctp_module_info.ic_name, "%s", "HX8527-E44-L");
+        //sprintf(wind_device_info.ctp_module_info.fwvr, "0x%x", ic_data->vendor_config_ver);			
+        }
         I("%s: TP upgrade OK\n", __func__);
     }
 #ifdef HX_RST_PIN_FUNC
@@ -1015,7 +1032,7 @@ mem_alloc_fail:
 }
 
 
-#if defined(HX_USB_DETECT_GLOBAL)
+#if 0
 void himax_cable_detect_func(bool force_renew)
 {
     struct himax_ts_data *ts;
@@ -1554,7 +1571,7 @@ void himax_ts_work(struct himax_ts_data *ts)
     int j=0;
 #endif
 
-#if defined(HX_USB_DETECT_GLOBAL)
+#if 0
     himax_cable_detect_func(false);
 #endif
 
@@ -2142,15 +2159,20 @@ int himax_chip_common_probe(struct i2c_client *client, const struct i2c_device_i
     }
 #endif
 
-	#ifdef CONFIG_WIND_DEVICE_INFO
+/*	#ifdef CONFIG_WIND_DEVICE_INFO
 	{	
 		sprintf(wind_device_info.ctp_module_info.ic_name, "%s", "HX852xES");
 		sprintf(wind_device_info.ctp_module_info.fwvr, "0x%x", ic_data->vendor_config_ver);
 		wind_device_info.ctp_module_info.vendor = 0x01;
+		if(!strcmp("dsi_boe66_st7703_720p_video", caPanelName)) {
+                wind_device_info.ctp_module_info.vendor = 0x05;
+                sprintf(wind_device_info.ctp_module_info.ic_name, "%s", "HX8527-E44-L");
+                sprintf(wind_device_info.ctp_module_info.fwvr, "0x%x", ic_data->vendor_config_ver);			
+        }
 	}
 		
 		//printk("test update_msg.ic_fw_msg.vid=%04x\n", update_msg.ic_fw_msg.vid);
-#endif
+#endif*/
 //hebiao@wind-mobi.com 20171127 end	
 
 
@@ -2258,6 +2280,25 @@ int himax_chip_common_remove(struct i2c_client *client)
 
 }
 
+
+
+static void himax_report_all_leave(struct himax_ts_data *ts)
+{
+    int loop_i = 0;
+
+    for (loop_i = 0; loop_i < ts->nFinger_support; loop_i++)
+    {
+#ifndef HX_PROTOCOL_A
+        input_mt_slot(ts->input_dev, loop_i);
+        input_mt_report_slot_state(ts->input_dev, MT_TOOL_FINGER, 0);
+#endif
+    }
+    input_report_key(ts->input_dev, BTN_TOUCH, 0);
+    input_sync(ts->input_dev);
+}
+
+
+
 int himax_chip_common_suspend(struct himax_ts_data *ts)
 {
     int ret;
@@ -2329,6 +2370,7 @@ int himax_chip_common_suspend(struct himax_ts_data *ts)
         ts->pre_finger_mask = 0;
         FAKE_POWER_KEY_SEND=false;
         I("[himax] %s: SMART_WAKEUP enable, reject suspend\n",__func__);
+		himax_report_all_leave(ts);
         return 0;
     }
 #endif
@@ -2350,6 +2392,7 @@ int himax_chip_common_suspend(struct himax_ts_data *ts)
     if (ts->pdata->powerOff3V3 && ts->pdata->power)
         ts->pdata->power(0);
     I("%s: END \n", __func__);
+	himax_report_all_leave(ts);
     return 0;
 }
 

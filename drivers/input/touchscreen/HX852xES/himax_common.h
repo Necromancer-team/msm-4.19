@@ -75,7 +75,7 @@ void himax_touch_proc_deinit(void);
 #endif
 //===========Himax Option function=============
 #define HX_RST_PIN_FUNC
-//#define HX_AUTO_UPDATE_FW
+#define HX_AUTO_UPDATE_FW
 //hongfan@wind-mobi.com 20180111 end
 #define HX_ESD_RECOVERY
 #define HX_CHIP_STATUS_MONITOR		/*for ESD 2nd solution,it does not support incell,default off*/
@@ -83,7 +83,7 @@ void himax_touch_proc_deinit(void);
 //#define HX_GESTURE_TRACK
 #define HX_HIGH_SENSE
 //#define HX_PALM_REPORT
-//#define HX_USB_DETECT_GLOBAL
+#define HX_USB_DETECT_GLOBAL
 //#define HX_USB_DETECT_CALLBACK
 //#define HX_PROTOCOL_A					/* for MTK special platform.If turning on,it will report to system by using specific format. */
 #define HX_RESUME_HW_RESET

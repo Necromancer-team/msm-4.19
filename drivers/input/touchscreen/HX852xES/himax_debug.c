@@ -2812,7 +2812,10 @@ static ssize_t himax_HSEN_write(struct file *file, const char *buff,
     else
         return -EINVAL;
 
-    himax_set_HSEN_enable(ts->client, ts->HSEN_enable, ts->suspended);
+// wangbing@wind-mobi.com 20180529 begin >>> [1/5] modify the i2c transform times
+    // himax_set_HSEN_enable(ts->client, ts->HSEN_enable, ts->suspended);
+    himax_set_work_status(ts->client, ts->SMWP_enable, ts->HSEN_enable, ts->suspended);
+// wangbing@wind-mobi.com 20180529 end   <<< [1/5] modify the i2c transform times
 
     I("%s: HSEN_enable = %d.\n", __func__, ts->HSEN_enable);
 
@@ -2879,7 +2882,10 @@ static ssize_t himax_SMWP_write(struct file *file, const char *buff,
     else
         return -EINVAL;
 
-    himax_set_SMWP_enable(ts->client, ts->SMWP_enable, ts->suspended);
+// wangbing@wind-mobi.com 20180529 begin >>> [2/5] modify the i2c transform times
+    // himax_set_SMWP_enable(ts->client, ts->SMWP_enable, ts->suspended);
+    himax_set_work_status(ts->client, ts->SMWP_enable, ts->HSEN_enable, ts->suspended);
+// wangbing@wind-mobi.com 20180529 end   <<< [2/5] modify the i2c transform times
 
     HX_SMWP_EN = ts->SMWP_enable;
     I("%s: SMART_WAKEUP_enable = %d.\n", __func__, HX_SMWP_EN);
