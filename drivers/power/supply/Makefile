@@ -89,3 +89,4 @@ obj-$(CONFIG_AXP288_CHARGER)	+= axp288_charger.o
 obj-$(CONFIG_CHARGER_CROS_USBPD)	+= cros_usbpd-charger.o
 obj-$(CONFIG_BATTERY_CW2015)	+= cw2015_battery.o
 obj-$(CONFIG_ARCH_QCOM)		+= qcom/
+obj-$(CONFIG_GAUGE_CW2017)	+= cw2017_fuel_gauge.o
