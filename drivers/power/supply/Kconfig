@@ -675,6 +675,12 @@ config BATTERY_CW2015
 	  Say Y here to enable support for the cellwise cw2015
 	  battery fuel gauge.
 
+config GAUGE_CW2017
+	tristate "CW2017 Battery Fg"
+	depends on I2C
+	help
+	  Say Y to include support for CW2017 Battery FG.
+
 source "drivers/power/supply/qcom/Kconfig"
 
 endif # POWER_SUPPLY
