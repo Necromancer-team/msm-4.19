@@ -26,7 +26,17 @@
 
 #define VSYNC_DELAY msecs_to_jiffies(17)
 #ifndef CONFIG_BACKLIGHT_QCOM_SPMI_WLED
+
 DEFINE_LED_TRIGGER(bl_led_trigger);
+#endif
+
+#ifdef CONFIG_MACH_XIAOMI
+#include <linux/xiaomi_series.h>
+extern int xiaomi_series_read(void);
+#endif
+
+#ifdef CONFIG_MACH_XIAOMI
+char g_lcd_id[128];
 #endif
 
 void mdss_dsi_panel_pwm_cfg(struct mdss_dsi_ctrl_pdata *ctrl)
@@ -214,6 +224,15 @@ static struct dsi_cmd_desc backlight_cmd = {
 	led_pwm1
 };
 
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+extern int ulysse_ID0_status,ulysse_ID1_status;
+static char ulysse_led_pwm2[3] = {0x51, 0x0 ,0x0};	/* DTYPE_DCS_WRITE1 */
+static struct dsi_cmd_desc ulysse_backlight_cmd2 = {
+	{DTYPE_DCS_LWRITE, 1, 0, 0, 1, sizeof(ulysse_led_pwm2)},
+	ulysse_led_pwm2
+};
+#endif
+
 static void mdss_dsi_panel_bklt_dcs(struct mdss_dsi_ctrl_pdata *ctrl, int level)
 {
 	struct dcs_cmd_req cmdreq;
@@ -227,10 +246,27 @@ static void mdss_dsi_panel_bklt_dcs(struct mdss_dsi_ctrl_pdata *ctrl, int level)
 
 	pr_debug("%s: level=%d\n", __func__, level);
 
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+	if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE) {
+		if((ulysse_ID0_status==0) && (ulysse_ID1_status==0)) {
+			ulysse_led_pwm2[1] = (unsigned char)((level & 0xf0)>>4);
+			ulysse_led_pwm2[2] = (unsigned char)((level & 0x0f)<<4);
+			pr_debug("swb.%s led_pwm2[1]= 0x%x,led_pwm2[2]=0x%x\n",__func__,ulysse_led_pwm2[1],ulysse_led_pwm2[2]);
+		} else {
+			led_pwm1[1] = (unsigned char)level;
+			pr_debug("swb.%s ugglite and ugg use default led_pwm1\n",__func__);
+		}
+	};
+#endif
+
 	led_pwm1[1] = (unsigned char)level;
 
 	memset(&cmdreq, 0, sizeof(cmdreq));
 	cmdreq.cmds = &backlight_cmd;
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+	if((ulysse_ID0_status==0) && (ulysse_ID1_status==0))
+		cmdreq.cmds = &ulysse_backlight_cmd2;
+#endif
 	cmdreq.cmds_cnt = 1;
 	cmdreq.flags = CMD_REQ_COMMIT | CMD_CLK_CTRL;
 	cmdreq.rlen = 0;
@@ -257,6 +293,15 @@ static int mdss_dsi_request_gpios(struct mdss_dsi_ctrl_pdata *ctrl_pdata)
 			goto disp_en_gpio_err;
 		}
 	}
+
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+	if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE) {
+		if (gpio_is_valid(ctrl_pdata->rst_gpio)) {
+			gpio_free(ctrl_pdata->rst_gpio);
+		}
+	}
+#endif
+
 	rc = gpio_request(ctrl_pdata->rst_gpio, "disp_rst_n");
 	if (rc) {
 		pr_err("request reset gpio failed, rc=%d\n",
@@ -280,6 +325,49 @@ static int mdss_dsi_request_gpios(struct mdss_dsi_ctrl_pdata *ctrl_pdata)
 			goto lcd_mode_sel_gpio_err;
 		}
 	}
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+	if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE) {
+		if (gpio_is_valid(ctrl_pdata->ulysse_ocp2131_enp_gpio)) {
+			rc = gpio_request(ctrl_pdata->ulysse_ocp2131_enp_gpio,"ocp2131_enp_enable");
+			if (rc) {
+				pr_err("request ulysse_ocp2131_enp_gpio failed, rc=%d\n",
+						rc);
+				goto ulysse_ocp2131_enp_gpio;
+			}
+		}
+
+		if (gpio_is_valid(ctrl_pdata->ulysse_ocp2131_enn_gpio)) {
+			rc = gpio_request(ctrl_pdata->ulysse_ocp2131_enn_gpio,"ocp2131_enn_enable");
+			if (rc) {
+				pr_err("request ulysse_ocp2131_enn_gpio failed, rc=%d\n",
+						rc);
+				goto ulysse_ocp2131_enn_gpio;
+			}
+		}
+
+		if (gpio_is_valid(ctrl_pdata->ulysse_lcmio_en_gpio)) {
+			gpio_free(ctrl_pdata->ulysse_lcmio_en_gpio);
+		}
+
+		if(gpio_is_valid(ctrl_pdata->ulysse_lcmio_en_gpio)) {
+			rc = gpio_request(ctrl_pdata->ulysse_lcmio_en_gpio,"lcmio-en-gpio");
+			printk("ysg:%s:%d ulysse_lcmio_gpio=%d\n",__func__,__LINE__,ctrl_pdata->ulysse_lcmio_en_gpio);
+			if(rc){
+				pr_err("request ulysse_lcmio-en gpio failed,rc=%d\n",rc);
+				goto ulysse_lcmio_en_gpio_err;
+			}
+		}
+
+			if(gpio_is_valid(ctrl_pdata->ulysse_lcm_vci_en_gpio)) {
+				rc = gpio_request(ctrl_pdata->ulysse_lcm_vci_en_gpio,"lcm_vci_en_gpio");
+				printk("ysg:%s:%d ulysse_vci_gpio=%d\n",__func__,__LINE__,ctrl_pdata->ulysse_lcm_vci_en_gpio);
+			if(rc){
+				pr_err("request ulysse_lcm-vci-en gpio failed,rc=%d\n",rc);
+				goto ulysse_lcm_vci_en_gpio_err;
+			}
+		}
+	}
+#endif
 
 	return rc;
 
@@ -288,6 +376,20 @@ lcd_mode_sel_gpio_err:
 		gpio_free(ctrl_pdata->avdd_en_gpio);
 avdd_en_gpio_err:
 	gpio_free(ctrl_pdata->rst_gpio);
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+ulysse_ocp2131_enp_gpio:
+	if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE)
+		gpio_free(ctrl_pdata->ulysse_ocp2131_enp_gpio);
+ulysse_ocp2131_enn_gpio:
+	if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE)
+		gpio_free(ctrl_pdata->ulysse_ocp2131_enn_gpio);
+ulysse_lcmio_en_gpio_err:
+	if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE)
+		gpio_free(ctrl_pdata->ulysse_lcmio_en_gpio);
+ulysse_lcm_vci_en_gpio_err:
+	if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE)
+		gpio_free(ctrl_pdata->ulysse_lcm_vci_en_gpio);
+#endif
 rst_gpio_err:
 	if (gpio_is_valid(ctrl_pdata->disp_en_gpio))
 		gpio_free(ctrl_pdata->disp_en_gpio);
@@ -413,6 +515,28 @@ int mdss_dsi_panel_reset(struct mdss_panel_data *pdata, int enable)
 			return rc;
 		}
 		if (!pinfo->cont_splash_enabled) {
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+			if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE) {
+				if (gpio_is_valid(ctrl_pdata->ulysse_ocp2131_enp_gpio)) {
+					rc = gpio_direction_output(
+						ctrl_pdata->ulysse_ocp2131_enp_gpio, 1);
+					if (rc) {
+						pr_err("%s: unable to set dir for ulysse_ocp2131_enp_gpio\n",__func__);
+						goto exit;
+					}
+				}
+				mdelay(2);
+
+				if (gpio_is_valid(ctrl_pdata->ulysse_ocp2131_enn_gpio)) {
+					rc = gpio_direction_output(
+						ctrl_pdata->ulysse_ocp2131_enn_gpio, 1);
+					if (rc) {
+						pr_err("%s: unable to set dir for ulysse_ocp2131_enn_gpio\n",__func__);
+						goto exit;
+					}
+				}
+			}
+#endif
 			if (gpio_is_valid(ctrl_pdata->disp_en_gpio)) {
 				rc = gpio_direction_output(
 					ctrl_pdata->disp_en_gpio, 1);
@@ -422,6 +546,38 @@ int mdss_dsi_panel_reset(struct mdss_panel_data *pdata, int enable)
 					goto exit;
 				}
 			}
+
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+			if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE) {
+				if(gpio_is_valid(ctrl_pdata->ulysse_lcmio_en_gpio)) {
+					printk("ysg gpio_out put 1.8v vddio\n");
+					rc = gpio_direction_output(ctrl_pdata->ulysse_lcmio_en_gpio,1);
+					gpio_set_value(ctrl_pdata->ulysse_lcmio_en_gpio,1);
+					if(rc){
+						pr_err("%s: unable to set dir for lcmio en gpio\n",
+							__func__);
+						goto exit;
+
+					}
+				}
+				msleep(2);
+				if(gpio_is_valid(ctrl_pdata->ulysse_lcm_vci_en_gpio)){
+					printk("ysg gpio_out put 3.3v vci\n");
+					gpio_direction_output(ctrl_pdata->ulysse_lcm_vci_en_gpio,1);
+					mdelay(2);
+					gpio_direction_output(ctrl_pdata->ulysse_lcm_vci_en_gpio,0);
+					mdelay(2);
+					gpio_direction_output(ctrl_pdata->ulysse_lcm_vci_en_gpio,1);
+					mdelay(10);
+					if(rc){
+						pr_err("%s: unable to set dir for lcm-vci-en gpio\n",
+							__func__);
+						goto exit;
+					}
+				}
+				msleep(10);
+			}
+#endif
 
 			if (pdata->panel_info.rst_seq_len) {
 				rc = gpio_direction_output(ctrl_pdata->rst_gpio,
@@ -491,11 +647,42 @@ int mdss_dsi_panel_reset(struct mdss_panel_data *pdata, int enable)
 
 			gpio_free(ctrl_pdata->avdd_en_gpio);
 		}
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+		if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE) {
+			if (gpio_is_valid(ctrl_pdata->rst_gpio)) {
+				gpio_set_value((ctrl_pdata->rst_gpio), 0);
+				gpio_free(ctrl_pdata->rst_gpio);
+				mdelay(15);
+			}
+			if (gpio_is_valid(ctrl_pdata->ulysse_ocp2131_enn_gpio)) {
+					gpio_set_value((ctrl_pdata->ulysse_ocp2131_enn_gpio), 0);
+					gpio_free(ctrl_pdata->ulysse_ocp2131_enn_gpio);
+				}
+			mdelay(2);
+			if (gpio_is_valid(ctrl_pdata->ulysse_ocp2131_enp_gpio)) {
+					gpio_set_value((ctrl_pdata->ulysse_ocp2131_enp_gpio), 0);
+					gpio_free(ctrl_pdata->ulysse_ocp2131_enp_gpio);
+				}
+		}
+#endif
 		if (gpio_is_valid(ctrl_pdata->disp_en_gpio)) {
 			gpio_set_value((ctrl_pdata->disp_en_gpio), 0);
 			gpio_free(ctrl_pdata->disp_en_gpio);
 		}
 		gpio_set_value((ctrl_pdata->rst_gpio), 0);
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+		if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE) {
+			if(gpio_is_valid(ctrl_pdata->ulysse_lcm_vci_en_gpio)) {
+				gpio_set_value((ctrl_pdata->ulysse_lcm_vci_en_gpio),0);
+				gpio_free(ctrl_pdata->ulysse_lcm_vci_en_gpio);
+			}
+
+			if(gpio_is_valid(ctrl_pdata->ulysse_lcmio_en_gpio),0) {
+				gpio_set_value((ctrl_pdata->ulysse_lcmio_en_gpio),0);
+				gpio_free(ctrl_pdata->ulysse_lcmio_en_gpio);
+			}
+		} else
+#endif
 		gpio_free(ctrl_pdata->rst_gpio);
 		if (gpio_is_valid(ctrl_pdata->lcd_mode_sel_gpio)) {
 			gpio_set_value(ctrl_pdata->lcd_mode_sel_gpio, 0);
@@ -1809,6 +1996,22 @@ static bool mdss_dsi_cmp_panel_reg_v2(struct mdss_dsi_ctrl_pdata *ctrl)
 
 	for (j = 0; j < ctrl->groups; ++j) {
 		for (i = 0; i < len; ++i) {
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+			if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE) {
+				if (ctrl->return_buf[0] !=
+					ctrl->status_value[group + 0]){
+					printk("return_buf[i]=%d\n",ctrl->return_buf[i]);
+					break;
+				}
+				/*to check the panel register */
+				if(strstr(g_lcd_id, "tm otm1901a") != NULL) {
+					if (ctrl->return_buf[1] !=
+						ctrl->status_value[group + 1]) {
+						printk("hml read 0x1d = 0x%x\n",ctrl->return_buf[1]);
+					}
+				}
+			} else {
+#endif
 			pr_debug("[%i] return:0x%x status:0x%x\n",
 				i, ctrl->return_buf[i],
 				(unsigned int)ctrl->status_value[group + i]);
@@ -1817,6 +2020,9 @@ static bool mdss_dsi_cmp_panel_reg_v2(struct mdss_dsi_ctrl_pdata *ctrl)
 			if (ctrl->return_buf[i] !=
 				ctrl->status_value[group + i])
 				break;
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+			}
+#endif
 		}
 
 		if (i == len)
@@ -2053,7 +2259,13 @@ static void mdss_dsi_parse_esd_params(struct device_node *np,
 		} else if (!strcmp(string, "te_signal_check")) {
 			if (pinfo->mipi.mode == DSI_CMD_MODE) {
 				ctrl->status_mode = ESD_TE;
-			} else {
+			} else
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+			if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE) {
+				ctrl->status_mode = ESD_TE;
+			} else
+#endif
+			{
 				pr_err("TE-ESD not valid for video mode\n");
 				goto error;
 			}
@@ -2657,13 +2869,47 @@ static int  mdss_dsi_panel_config_res_properties(struct device_node *np,
 		struct mdss_panel_data *panel_data,
 		bool default_timing)
 {
+
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+	int ulysse_board_id0 = 0;
+	int ulysse_board_id1 = 0;
+	static const char *ulysse_lcd_panel_name;
+#endif
+
 	int rc = 0;
+
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+	if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE) {
+		ulysse_lcd_panel_name = of_get_property(np, "qcom,mdss-dsi-panel-name", NULL);
+		ulysse_board_id0=gpio_get_value(20);
+		ulysse_board_id1=gpio_get_value(21);
+		printk("ysg %s:%d ulysse_board_id0=%d,ulysse_board_id1=%d,ulysse_panel_name=%s\n",__func__,__LINE__,ulysse_board_id0,ulysse_board_id1,ulysse_lcd_panel_name);
+	}
+#endif
 
 	mdss_dsi_parse_roi_alignment(np, pt);
 
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+	if(xiaomi_series_read() == XIAOMI_SERIES_ULYSSE && !strcmp(ulysse_lcd_panel_name,"hx otm1901a 720p video mode dsi panel")) {
+			if((ulysse_board_id0==1&&ulysse_board_id1==0)||(ulysse_board_id0==1&&ulysse_board_id1==1)) {
+				printk("ysg india_on_cmds 2222\n");
+				mdss_dsi_parse_dcs_cmds(np, &pt->on_cmds,
+				"qcom,mdss-dsi-india-on-command",
+				"qcom,mdss-dsi-on-command-state");
+			} else {
+				printk("ysg on_cmds 1111\n");
+				mdss_dsi_parse_dcs_cmds(np, &pt->on_cmds,
+				"qcom,mdss-dsi-on-command",
+				"qcom,mdss-dsi-on-command-state");
+			}
+	} else {
+#endif
 	mdss_dsi_parse_dcs_cmds(np, &pt->on_cmds,
 		"qcom,mdss-dsi-on-command",
 		"qcom,mdss-dsi-on-command-state");
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+	}
+#endif
 
 	mdss_dsi_parse_dcs_cmds(np, &pt->post_panel_on_cmds,
 		"qcom,mdss-dsi-post-panel-on-command", NULL);
@@ -2772,6 +3018,18 @@ static int mdss_panel_parse_dt(struct device_node *np,
 	static const char *pdest;
 	const char *bridge_chip_name;
 	struct mdss_panel_info *pinfo = &(ctrl_pdata->panel_data.panel_info);
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+	int ulysse_board_id0 = 0;
+	int ulysse_board_id1 = 0;
+#endif
+
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+	if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE) {
+		ulysse_board_id0 = gpio_get_value(20);
+		ulysse_board_id1 = gpio_get_value(21);
+		printk("ysg ce ulysse_board_id0=%d,ulysse_board_id1=%d\n",ulysse_board_id0,ulysse_board_id1);
+	}
+#endif
 
 	if (mdss_dsi_is_hw_config_split(ctrl_pdata->shared_data))
 		pinfo->is_split_display = true;
@@ -3022,6 +3280,43 @@ error:
 	return -EINVAL;
 }
 
+#ifdef CONFIG_MACH_XIAOMI
+static int msm_parse_lcd_name(struct device_node *node) {
+	const char* name;
+	name=of_get_property(node,"qcom,mdss-dsi-panel-name", NULL);
+	strcpy(g_lcd_id,name);
+	return 0;
+}
+
+static ssize_t msm_fb_lcd_name(struct device *dev,
+		struct device_attribute *attr, char *buf)
+ {
+	ssize_t ret = 0;
+	sprintf(buf, "%s\n", g_lcd_id);
+	ret = strlen(buf) + 1;
+	return ret;
+ }
+
+static DEVICE_ATTR(lcd_name,0664,msm_fb_lcd_name,NULL);
+static struct kobject *msm_lcd_name;
+static int msm_lcd_name_create_sysfs(void){
+	int ret;
+	msm_lcd_name=kobject_create_and_add("android_lcd",NULL);
+	if(msm_lcd_name==NULL) {
+		pr_info("msm_lcd_name_create_sysfs_ failed\n");
+		ret=-ENOMEM;
+		return ret;
+	}
+	ret=sysfs_create_file(msm_lcd_name,&dev_attr_lcd_name.attr);
+	if(ret) {
+	pr_info("%s failed \n",__func__);
+	kobject_del(msm_lcd_name);
+	}
+	return 0;
+}
+char g_lcd_id[128];
+#endif
+
 int mdss_dsi_panel_init(struct device_node *node,
 	struct mdss_dsi_ctrl_pdata *ctrl_pdata,
 	int ndx)
@@ -3047,6 +3342,17 @@ int mdss_dsi_panel_init(struct device_node *node,
 		pr_info("%s: Panel Name = %s\n", __func__, panel_name);
 		strlcpy(&pinfo->panel_name[0], panel_name, MDSS_MAX_PANEL_LEN);
 	}
+
+#ifdef CONFIG_MACH_XIAOMI
+	rc = msm_parse_lcd_name(node);
+	if (rc) {
+		pr_err("%s:%d panel parse_lcd_name failed\n", __func__, __LINE__);
+		return rc;
+	}
+
+	strcpy(g_lcd_id, panel_name);
+#endif
+
 	rc = mdss_panel_parse_dt(node, ctrl_pdata);
 	if (rc) {
 		pr_err("%s:%d panel dt parse failed\n", __func__, __LINE__);
@@ -3066,6 +3372,8 @@ int mdss_dsi_panel_init(struct device_node *node,
 	ctrl_pdata->panel_data.apply_display_setting =
 			mdss_dsi_panel_apply_display_setting;
 	ctrl_pdata->switch_mode = mdss_dsi_panel_switch_mode;
-
+#ifdef CONFIG_MACH_XIAOMI
+	msm_lcd_name_create_sysfs();
+#endif
 	return 0;
 }
