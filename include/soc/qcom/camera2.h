@@ -23,6 +23,36 @@
 
 #define MAX_SPECIAL_SUPPORT_SIZE 10
 
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+enum __ulysse_camera_vendor_module_id{
+	ULYSSE_MID_NULL = 0,
+	ULYSSE_MID_SUNNY,
+	ULYSSE_MID_TRULY,
+	ULYSSE_MID_A_KERR,
+	ULYSSE_MID_LITEARRAY,
+	ULYSSE_MID_DARLING,
+	ULYSSE_MID_QTECH,
+	ULYSSE_MID_OFILM,
+	ULYSSE_MID_HUAQUAN,
+	ULYSSE_MID_KINGCOM = ULYSSE_MID_HUAQUAN,
+	ULYSSE_MID_BOOYI,
+	ULYSSE_MID_LAIMU,
+	ULYSSE_MID_D3 = 0x0d,
+	ULYSSE_MID_D6 = 0x0e,
+	ULYSSE_MID_WDSEN,
+	ULYSSE_MID_SUNRISE,
+	ULYSSE_MID_PRIMAX = 0x17,
+	ULYSSE_MID_MAX
+};
+typedef enum __ulysse_camera_vendor_module_id ulysse_camera_vendor_module_id;
+
+struct ulysse_vendor_eeprom {
+	char ulysse_eeprom_name[128];
+	uint8_t ulysse_module_id;
+};
+#define ULYSSE_CAMERA_VENDOR_EEPROM_COUNT_MAX		6
+#endif
+
 enum msm_camera_device_type_t {
 	MSM_CAMERA_I2C_DEVICE,
 	MSM_CAMERA_PLATFORM_DEVICE,
