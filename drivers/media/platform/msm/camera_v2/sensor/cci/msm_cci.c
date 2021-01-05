@@ -25,6 +25,11 @@
 #include "msm_camera_dt_util.h"
 #include "cam_hw_ops.h"
 
+#ifdef CONFIG_MACH_XIAOMI
+#include <linux/xiaomi_series.h>
+extern int xiaomi_series_read(void);
+#endif
+
 #define V4L2_IDENT_CCI 50005
 #define CCI_I2C_QUEUE_0_SIZE 64
 #define CCI_I2C_Q0_SIZE_128W 128
@@ -34,6 +39,7 @@
 #define CCI_MAX_DELAY 1000000
 
 #define CCI_TIMEOUT msecs_to_jiffies(100)
+int cci_timeout;
 
 /* TODO move this somewhere else */
 #define MSM_CCI_DRV_NAME "msm_cci"
@@ -170,7 +176,7 @@ static void msm_cci_flush_queue(struct cci_device *cci_dev,
 
 	msm_camera_io_w_mb(1 << master, cci_dev->base + CCI_HALT_REQ_ADDR);
 	rc = wait_for_completion_timeout(
-		&cci_dev->cci_master_info[master].reset_complete, CCI_TIMEOUT);
+		&cci_dev->cci_master_info[master].reset_complete, cci_timeout);
 	if (rc < 0) {
 		pr_err("%s:%d wait failed\n", __func__, __LINE__);
 	} else if (rc == 0) {
@@ -190,7 +196,7 @@ static void msm_cci_flush_queue(struct cci_device *cci_dev,
 		/* wait for reset done irq */
 		rc = wait_for_completion_timeout(
 			&cci_dev->cci_master_info[master].reset_complete,
-			CCI_TIMEOUT);
+			cci_timeout);
 		if (rc <= 0)
 			pr_err("%s:%d wait failed %d\n", __func__, __LINE__,
 				rc);
@@ -240,7 +246,7 @@ static int32_t msm_cci_validate_queue(struct cci_device *cci_dev,
 		spin_unlock_irqrestore(&cci_dev->cci_master_info[
 				master].lock_q[queue], flags);
 		rc = wait_for_completion_timeout(&cci_dev->cci_master_info[
-				master].report_q[queue], CCI_TIMEOUT);
+				master].report_q[queue], cci_timeout);
 		if (rc <= 0) {
 			pr_err("%s: wait_for_completion_timeout %d\n",
 				 __func__, __LINE__);
@@ -295,7 +301,7 @@ static uint32_t msm_cci_wait(struct cci_device *cci_dev,
 	}
 
 	rc = wait_for_completion_timeout(&cci_dev->cci_master_info[
-			master].report_q[queue], CCI_TIMEOUT);
+			master].report_q[queue], cci_timeout);
 	CDBG("%s line %d wait DONE_for_completion_timeout\n",
 		__func__, __LINE__);
 
@@ -942,7 +948,7 @@ static int32_t msm_cci_i2c_read(struct v4l2_subdev *sd,
 		__LINE__);
 
 	rc = wait_for_completion_timeout(&cci_dev->cci_master_info[
-			master].reset_complete, CCI_TIMEOUT);
+			master].reset_complete, cci_timeout);
 	if (rc <= 0) {
 		if (CCI_DUMP_REG)
 			msm_cci_dump_registers(cci_dev, master, queue);
@@ -1361,7 +1367,7 @@ static int32_t msm_cci_init(struct v4l2_subdev *sd,
 			/* wait for reset done irq */
 			rc = wait_for_completion_timeout(
 				&cci_dev->cci_master_info[
-				master].reset_complete, CCI_TIMEOUT);
+				master].reset_complete, cci_timeout);
 			if (rc <= 0)
 				pr_err("%s:%d wait failed %d\n", __func__,
 					__LINE__, rc);
@@ -1482,7 +1488,7 @@ static int32_t msm_cci_init(struct v4l2_subdev *sd,
 	msm_camera_io_w_mb(0x1, cci_dev->base + CCI_RESET_CMD_ADDR);
 	rc = wait_for_completion_timeout(
 		&cci_dev->cci_master_info[MASTER_0].reset_complete,
-		CCI_TIMEOUT);
+		cci_timeout);
 	if (rc <= 0) {
 		pr_err("%s: wait_for_completion_timeout %d\n",
 			 __func__, __LINE__);
@@ -2086,6 +2092,13 @@ static int msm_cci_probe(struct platform_device *pdev)
 {
 	struct cci_device *new_cci_dev;
 	int rc = 0, i = 0;
+
+	cci_timeout = CCI_TIMEOUT;
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+	if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE) {
+		cci_timeout = msecs_to_jiffies(1000);
+	}
+#endif
 
 	CDBG("%s: pdev %pK device id = %d\n", __func__, pdev, pdev->id);
 	new_cci_dev = kzalloc(sizeof(struct cci_device), GFP_KERNEL);
