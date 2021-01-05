@@ -19,6 +19,15 @@
 #include "msm_ois.h"
 #include "msm_cci.h"
 
+#ifdef CONFIG_MACH_XIAOMI
+#include <linux/xiaomi_series.h>
+extern int xiaomi_series_read(void);
+#endif
+
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+extern uint16_t ulysse_otp_ois[19];
+#endif
+
 DEFINE_MSM_MUTEX(msm_ois_mutex);
 /*#define MSM_OIS_DEBUG*/
 #undef CDBG
@@ -28,11 +37,67 @@ DEFINE_MSM_MUTEX(msm_ois_mutex);
 #define CDBG(fmt, args...) pr_debug(fmt, ##args)
 #endif
 
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+typedef	uint16_t ULYSSE_OIS_UWORD;
+struct ULYSSE_OIS_otp{
+	ULYSSE_OIS_UWORD	ulysse_gl_CURDAT;
+	ULYSSE_OIS_UWORD	ulysse_gl_HALOFS_X;
+	ULYSSE_OIS_UWORD	ulysse_gl_HALOFS_Y;
+	ULYSSE_OIS_UWORD	ulysse_gl_HX_OFS;
+	ULYSSE_OIS_UWORD	ulysse_gl_HY_OFS;
+	ULYSSE_OIS_UWORD	ulysse_gl_PSTXOF;
+	ULYSSE_OIS_UWORD	ulysse_gl_PSTYOF;
+	ULYSSE_OIS_UWORD	ulysse_gl_GX_OFS;
+	ULYSSE_OIS_UWORD	ulysse_gl_GY_OFS;
+	ULYSSE_OIS_UWORD	ulysse_gl_KgxHG;
+	ULYSSE_OIS_UWORD	ulysse_gl_KgyHG;
+	ULYSSE_OIS_UWORD	ulysse_gl_KGXG;
+	ULYSSE_OIS_UWORD	ulysse_gl_KGYG;
+	ULYSSE_OIS_UWORD	ulysse_gl_SFTHAL_X;
+	ULYSSE_OIS_UWORD	ulysse_gl_SFTHAL_Y;
+	ULYSSE_OIS_UWORD	ulysse_gl_TMP_X_;
+	ULYSSE_OIS_UWORD	ulysse_gl_TMP_Y_;
+	ULYSSE_OIS_UWORD	ulysse_gl_KgxH0;
+	ULYSSE_OIS_UWORD	ulysse_gl_KgyH0;
+};
+#endif
+
 static struct v4l2_file_operations msm_ois_v4l2_subdev_fops;
 static int32_t msm_ois_power_up(struct msm_ois_ctrl_t *o_ctrl);
 static int32_t msm_ois_power_down(struct msm_ois_ctrl_t *o_ctrl);
 
 static struct i2c_driver msm_ois_i2c_driver;
+
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+static struct ULYSSE_OIS_otp * ulysse_msm_ois_otp;
+#endif
+
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+int32_t ulysse_i = 0;
+unsigned char ulysse_data_rd[2]={0};
+unsigned short int ulysse_read_data = 0;
+uint16_t ulysse_ois_addr[] = {
+			0x8230,
+			0x8231,
+			0x8232,
+			0x841e,
+			0x849e,
+			0x8239,
+			0x823b,
+			0x8406,
+			0x8486,
+			0x8446,
+			0x84c6,
+			0x840f,
+			0x848f,
+			0x846a,
+			0x846b,
+			0x846a,
+			0x846b,
+			0x8470,
+			0x8472
+		};
+#endif
 
 static int32_t data_type_to_num_bytes(
 	enum msm_camera_i2c_data_type data_type)
@@ -71,6 +136,11 @@ static int32_t msm_ois_download(struct msm_ois_ctrl_t *o_ctrl)
 	char name_coeff[MAX_SENSOR_NAME] = {0};
 	struct device *dev = &(o_ctrl->pdev->dev);
 	enum msm_camera_i2c_reg_addr_type save_addr_type;
+
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+	if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE)
+		return 0;
+#endif
 
 	CDBG("Enter\n");
 	save_addr_type = o_ctrl->i2c_client.addr_type;
@@ -417,9 +487,16 @@ static int32_t msm_ois_control(struct msm_ois_ctrl_t *o_ctrl,
 {
 	struct reg_settings_ois_t *settings = NULL;
 	int32_t rc = 0, i = 0;
+	int max_ois_reg_settings = MAX_OIS_REG_SETTINGS;
 	struct msm_camera_cci_client *cci_client = NULL;
 
 	CDBG("Enter\n");
+
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+	if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE) {
+		max_ois_reg_settings = 2000;
+	}
+#endif
 
 	if (o_ctrl->ois_device_type == MSM_CAMERA_PLATFORM_DEVICE) {
 		cci_client = o_ctrl->i2c_client.cci_client;
@@ -438,7 +515,7 @@ static int32_t msm_ois_control(struct msm_ois_ctrl_t *o_ctrl,
 
 	if (set_info->ois_params.setting_size > 0 &&
 		set_info->ois_params.setting_size
-		< MAX_OIS_REG_SETTINGS) {
+		< max_ois_reg_settings) {
 		settings = kmalloc(
 			sizeof(struct reg_settings_ois_t) *
 			(set_info->ois_params.setting_size),
@@ -459,6 +536,17 @@ static int32_t msm_ois_control(struct msm_ois_ctrl_t *o_ctrl,
 		rc = msm_ois_write_settings(o_ctrl,
 			set_info->ois_params.setting_size,
 			settings);
+
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+		if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE) {
+			ulysse_msm_ois_otp =(struct ULYSSE_OIS_otp *)ulysse_otp_ois;
+
+			for(ulysse_i = 0 ; ulysse_i < 19 ; ulysse_i++) {
+				o_ctrl->i2c_client.i2c_func_tbl->i2c_write_seq(
+						&o_ctrl->i2c_client,ulysse_ois_addr[ulysse_i],(uint8_t*)&ulysse_otp_ois[ulysse_i], 2);
+			}
+		}
+#endif
 
 		for (i = 0; i < set_info->ois_params.setting_size; i++) {
 			if (settings[i].i2c_operation
@@ -539,6 +627,16 @@ static int32_t msm_ois_config(struct msm_ois_ctrl_t *o_ctrl,
 			rc = -EFAULT;
 			break;
 		}
+
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+		if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE) {
+			if (!conf_array.size) {
+				pr_err("%s:%d failed\n", __func__, __LINE__);
+				rc = -EFAULT;
+				break;
+			}
+		}
+#endif
 
 		if (!conf_array.size ||
 			conf_array.size > I2C_SEQ_REG_DATA_MAX) {
@@ -995,6 +1093,10 @@ static int32_t msm_ois_platform_probe(struct platform_device *pdev)
 			pr_err("ERR:%s: Error in reading OIS pinctrl\n",
 				__func__);
 			msm_ois_t->cam_pinctrl_status = 0;
+#ifdef CONFIG_MACH_XIAOMI_ULYSSE
+			if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE)
+				rc = 0;
+#endif
 		}
 	}
 
