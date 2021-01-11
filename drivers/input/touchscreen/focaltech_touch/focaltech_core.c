@@ -1366,6 +1366,10 @@ static void fts_ts_late_resume(struct early_suspend *handler)
 }
 #endif
 
+#ifdef CONFIG_MACH_XIAOMI
+extern bool xiaomi_ts_probed;
+#endif
+
 static int fts_ts_probe_entry(struct fts_ts_data *ts_data)
 {
 	int ret = 0;
@@ -1517,6 +1521,10 @@ static int fts_ts_probe_entry(struct fts_ts_data *ts_data)
 	register_early_suspend(&ts_data->early_suspend);
 #endif
 
+#ifdef CONFIG_MACH_XIAOMI
+	xiaomi_ts_probed = true;
+#endif
+
 	FTS_FUNC_EXIT();
 	return 0;
 
@@ -1600,6 +1608,10 @@ static int fts_ts_remove_entry(struct fts_ts_data *ts_data)
 
 	kfree_safe(ts_data->pdata);
 	kfree_safe(ts_data);
+
+#ifdef CONFIG_MACH_XIAOMI
+	xiaomi_ts_probed = false;
+#endif
 
 	FTS_FUNC_EXIT();
 
@@ -1770,6 +1782,11 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 	int ret = 0;
 	struct fts_ts_data *ts_data = NULL;
 	struct device_node *dp = client->dev.of_node;
+
+#ifdef CONFIG_MACH_XIAOMI
+	if (xiaomi_ts_probed)
+		return -ENODEV;
+#endif
 
 	FTS_INFO("Touch Screen(I2C BUS) driver prboe...");
 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
