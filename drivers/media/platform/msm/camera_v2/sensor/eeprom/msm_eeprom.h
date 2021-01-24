@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 /* Copyright (c) 2011-2015, 2018, 2020, The Linux Foundation. All rights reserved.
+ * Copyright (C) 2018 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -48,5 +49,10 @@ struct msm_eeprom_ctrl_t {
 	struct msm_eeprom_memory_block_t cal_data;
 	uint8_t is_supported;
 };
+
+#ifdef CONFIG_MACH_XIAOMI_ROVA
+extern int ov13850_eeprom_sensor_writereg(struct msm_eeprom_ctrl_t *s_ctrl, uint32_t reg_addr, uint32_t reg_value, uint32_t delay);
+extern int eeprom_init_ov13850_reg_otp(struct msm_eeprom_ctrl_t *e_ctrl);
+#endif
 
 #endif
