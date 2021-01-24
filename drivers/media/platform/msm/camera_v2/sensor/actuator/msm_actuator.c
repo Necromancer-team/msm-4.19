@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /* Copyright (c) 2011-2020, The Linux Foundation. All rights reserved.
+ * Copyright (C) 2019 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -17,6 +18,16 @@
 #include "msm_sd.h"
 #include "msm_actuator.h"
 #include "msm_cci.h"
+
+#ifdef CONFIG_MACH_XIAOMI
+#include <linux/xiaomi_series.h>
+extern int xiaomi_series_read(void);
+#endif
+
+#ifdef CONFIG_MACH_XIAOMI
+#include <linux/xiaomi_device.h>
+extern int xiaomi_device_read(void);
+#endif
 
 DEFINE_MSM_MUTEX(msm_actuator_mutex);
 
@@ -847,6 +858,17 @@ static int32_t msm_actuator_park_lens(struct msm_actuator_ctrl_t *a_ctrl)
 	next_lens_pos = a_ctrl->step_position_table[a_ctrl->curr_step_pos];
 	while (next_lens_pos) {
 		/* conditions which help to reduce park lens time */
+#ifdef CONFIG_MACH_XIAOMI_TIARE
+		if (xiaomi_device_read() == XIAOMI_DEVICE_TIARE) {
+			if(next_lens_pos > 400){
+					next_lens_pos = 400;
+				}else if(next_lens_pos > 25){
+					next_lens_pos = next_lens_pos - 25;
+				}else{
+					next_lens_pos = 0;
+			}
+		} else {
+#endif
 		if (next_lens_pos > (a_ctrl->park_lens.max_step *
 			PARK_LENS_LONG_STEP)) {
 			next_lens_pos = next_lens_pos -
@@ -868,6 +890,9 @@ static int32_t msm_actuator_park_lens(struct msm_actuator_ctrl_t *a_ctrl)
 				(next_lens_pos - a_ctrl->park_lens.max_step) :
 				0;
 		}
+#ifdef CONFIG_MACH_XIAOMI_TIARE
+		}
+#endif
 		a_ctrl->func_tbl->actuator_parse_i2c_params(a_ctrl,
 			next_lens_pos, a_ctrl->park_lens.hw_params,
 			a_ctrl->park_lens.damping_delay);
@@ -886,6 +911,11 @@ static int32_t msm_actuator_park_lens(struct msm_actuator_ctrl_t *a_ctrl)
 		}
 		a_ctrl->i2c_tbl_index = 0;
 		/* Use typical damping time delay to avoid tick sound */
+#ifdef CONFIG_MACH_XIAOMI_TIARE
+		if (xiaomi_device_read() == XIAOMI_DEVICE_TIARE)
+			usleep_range(13000, 14000);
+		else
+#endif
 		usleep_range(10000, 12000);
 	}
 
