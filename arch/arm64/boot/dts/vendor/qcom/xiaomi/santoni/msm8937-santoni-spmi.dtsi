@@ -45,9 +45,10 @@
 &pmi_haptic {
 	/delete-property/ qcom,en-brake;
 	qcom,vmax-mv = <2700>;
+	qcom,actuator-type = <1>;
 };
 
-&pmi8950_charger {
+&qpnp_smbcharger {
        qcom,battery-data = <&qrd_batterydata>;
        qcom,float-voltage-mv = <4400>;
        qcom,chg-inhibit-fg;
@@ -57,7 +58,7 @@
        qcom,vchg-adc-channel-id = <3>;
 };
 
-&pmi8950_fg {
+&qpnp_fg {
 	qcom,battery-data = <&qrd_batterydata>;
 	qcom,cold-bat-decidegc = <(0)>;
 	qcom,cool-bat-decidegc = <(150)>;
