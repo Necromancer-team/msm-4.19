@@ -30,8 +30,7 @@
 };
 
 &mdss_dsi1 {
-	lab-supply = <&lab_regulator>;
-	ibb-supply = <&ibb_regulator>;
+	status = "disabled";
 };
 
 &labibb {
