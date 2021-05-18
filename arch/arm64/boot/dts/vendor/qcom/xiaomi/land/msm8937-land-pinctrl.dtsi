@@ -7,8 +7,3 @@
 &sdhc_1 {
 	qcom,vdd-always-on;
 };
-
-&pmi_haptic {
-	qcom,vmax-mv = <2700>;
-	qcom,actuator-type = <1>;
-};

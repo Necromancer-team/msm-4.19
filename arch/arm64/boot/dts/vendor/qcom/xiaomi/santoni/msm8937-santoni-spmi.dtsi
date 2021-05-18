@@ -18,12 +18,6 @@
 	qcom,qpnp-lab-init-lcd-voltage = <5500000>;
 };
 
-&pmi_haptic {
-	/delete-property/ qcom,en-brake;
-	qcom,vmax-mv = <2700>;
-	qcom,actuator-type = <1>;
-};
-
 &qpnp_smbcharger {
 	qcom,battery-data = <&qrd_batterydata>;
 	qcom,float-voltage-mv = <4400>;
