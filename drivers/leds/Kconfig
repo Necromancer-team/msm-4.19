@@ -844,6 +844,13 @@ config LEDS_QPNP_WLED
 	  variable brightness.  It also supports outputting the Avdd supply for
 	  AMOLED displays.
 
+config LEDS_VIBRATOR_GPIO
+	tristate "Vibrator GPIO driver"
+	depends on LEDS_CLASS && GPIOLIB
+	depends on OF
+	help
+	 This option enables support for GPIO based vibrator.
+
 comment "LED Triggers"
 source "drivers/leds/trigger/Kconfig"
 
