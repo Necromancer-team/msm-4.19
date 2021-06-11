@@ -37,3 +37,7 @@
 		#include "land/batterydata-qrd-feimaotui-4v4-4000mah.dtsi"
 	};
 };
+
+&mdss_fb0 {
+  /delete-node/ qcom,cont-splash-memory;
+};
