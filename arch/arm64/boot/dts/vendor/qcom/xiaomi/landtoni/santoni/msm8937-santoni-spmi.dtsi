@@ -6,58 +6,29 @@
 			};
 		};
 	};
-
-	qcom,pm8937@1 {
-		pm8937_s5: spm-regulator@2000 {
-			qcom,mode = "pwm";
-		};
-	};
-
-	qcom,pmi8950@3 {
-		labibb: qpnp-labibb-regulator {
-			ibb_regulator: qcom,ibb@dc00 {
-				/delete-property/
-					qcom,qpnp-ibb-use-default-voltage;
-				qcom,qpnp-ibb-init-lcd-voltage = <5500000>;
-			};
-
-			lab_regulator: qcom,lab@de00 {
-				/delete-property/
-					qcom,qpnp-ibb-use-default-voltage;
-				qcom,qpnp-ibb-init-lcd-voltage = <5500000>;
-			};
-		};
-		wled: qcom,leds@d800 {
-      			qcom,wled-stepper-en;
-    		};
-	};
 };
 
-&sdc2_cmd_on {
-	config {
-		drive-strength = <12>;
-	};
+&pm8937_s5 {
+	qcom,mode = "pwm";
 };
 
-&sdc2_data_on {
-	config {
-		drive-strength = <12>;
-	};
+&ibb_regulator {
+	/delete-property/ qcom,qpnp-ibb-use-default-voltage;
+	qcom,qpnp-ibb-init-lcd-voltage = <5500000>;
 };
 
-&pmi_haptic {
-	qcom,vmax-mv = <2700>;
+&lab_regulator {
+	/delete-property/ qcom,qpnp-lab-use-default-voltage;
+	qcom,qpnp-lab-init-lcd-voltage = <5500000>;
 };
 
 &qpnp_smbcharger {
-       /delete-property/qcom,autoadjust-vfloat;
-       qcom,battery-data = <&qrd_batterydata>;
-       qcom,float-voltage-mv = <4400>;
-       qcom,chg-inhibit-fg;
-       qcom,thermal-mitigation = <2000 1500 1200 700 0>;
-       status = "okay";
-       qcom,vchg_sns-vadc = <&pmi8950_vadc>;
-       qcom,vchg-adc-channel-id = <3>;
+	/delete-property/qcom,autoadjust-vfloat;
+	qcom,battery-data = <&qrd_batterydata>;
+	qcom,float-voltage-mv = <4400>;
+	qcom,chg-inhibit-fg;
+	qcom,thermal-mitigation = <2000 1500 1200 700 0>;
+	status = "okay";
 };
 
 &qpnp_fg {
@@ -88,8 +59,4 @@
 
 &apc_vreg_corner {
 	/delete-property/ qcom,cpr-enable;
-};
-
-&sdhc_1 {
-  qcom,vdd-always-on;
 };

@@ -1,29 +1,26 @@
-&soc {
-	i2c@78b7000 {
-		/delete-node/ synaptics@4b;
-		focaltech@3E {
-			compatible = "focaltech,fts_ts";
-			reg = <0x3E>;
-			interrupt-parent = <&tlmm>;
-			interrupts = <65 0x2008>;
-			vdd-supply = <&pm8937_l10>;
-			vcc_i2c-supply = <&pm8937_l5>;
-			pinctrl-names = "pmx_ts_active","pmx_ts_suspend",
-							"pmx_ts_release";
-			pinctrl-0 = <&ts_int_active &ts_reset_active>;
-			pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
-			pinctrl-2 = <&ts_release>;
-			focaltech,reset-gpio = <&tlmm 64 0x00>;
-			focaltech,irq-gpio = <&tlmm 65 0x2008>;
-			focaltech,display-coords = <0 0 720 1280>;
-			focaltech,max-touch-number = <10>;
-			focaltech,have-key;
-			focaltech,key-number = <3>;
-			focaltech,keys = <139 172 158>;
-			focaltech,key-y-coords = <2000 2000 2000>;
-			focaltech,key-x-coords = <140 360 580>;
-		};
-
+&i2c_3 {
+	focaltech@3E {
+		compatible = "focaltech,fts_ts";
+		reg = <0x3E>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <65 0x2008>;
+		vdd-supply = <&pm8937_l10>;
+		vcc_i2c-supply = <&pm8937_l5>;
+		pinctrl-names = "pmx_ts_active","pmx_ts_suspend",
+			"pmx_ts_release";
+		pinctrl-0 = <&ts_int_active &ts_reset_active>;
+		pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
+		pinctrl-2 = <&ts_release>;
+		focaltech,reset-gpio = <&tlmm 64 0x00>;
+		focaltech,irq-gpio = <&tlmm 65 0x2008>;
+		focaltech,display-coords = <0 0 720 1280>;
+		focaltech,max-touch-number = <10>;
+		focaltech,have-key;
+		focaltech,key-number = <3>;
+		focaltech,keys = <139 172 158>;
+		focaltech,key-y-coords = <2000 2000 2000>;
+		focaltech,key-x-coords = <140 360 580>;
+	};
 	ist30xx@50 {
 		compatible = "imagis,ist30xx-ts";
 		reg = <0x50>;
@@ -40,9 +37,7 @@
 		ist30xx,family-id = <0x36>;
 		ist30xx,reset-gpio = <&tlmm 64 0x00>;
 		ist30xx,irq-gpio = <&tlmm 65 0x2008>;
-		};
 	};
-
 	gen-vkeys_ist {
 		compatible = "qcom,gen-vkeys_ist";
 		label = "ist30xx_ts_input";

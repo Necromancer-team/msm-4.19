@@ -19,24 +19,24 @@
 	};
 };
 
-&flash_led {
-	/delete-node/ qcom,flash_1;
-	/delete-node/ qcom,torch_1;
-/*
-	pmi8950_torch2: qcom,torch_2 {
-		label = "torch";
-		qcom,led-name = "flashlight";
-		qcom,default-led-trigger =
-				"torch2_trigger";
-		qcom,max-current = <200>;
-		qcom,id = <1>;
-		qcom,current = <100>;
-	};
-*/
+&wled {
+	qcom,en-cabc;
 };
 
-&pmi8950_torch0 {
-	qcom,led-name = "flashlight";
+&sdc2_cmd_on {
+	config {
+		drive-strength = <12>;
+	};
+};
+
+&sdc2_data_on {
+	config {
+		drive-strength = <12>;
+	};
+};
+
+&sdhc_1 {
+	qcom,vdd-always-on;
 };
 
 &pmi_haptic {
