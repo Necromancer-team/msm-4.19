@@ -258,5 +258,5 @@
 	qcom,camera@2 {
 		reg = <0x02>;
 		qcom,eeprom-src = <&eeprom1 &eeprom2>;
-        };
+	};
 };
