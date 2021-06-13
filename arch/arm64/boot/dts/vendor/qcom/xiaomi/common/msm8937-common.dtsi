@@ -4,4 +4,5 @@
 #include "msm8937-pinctrl.dtsi"
 #include "msm8937-spi.dtsi"
 #include "msm8937-spmi.dtsi"
+#include "msm8937-mdss.dtsi"
 #include "msm8937-remove.dtsi"
