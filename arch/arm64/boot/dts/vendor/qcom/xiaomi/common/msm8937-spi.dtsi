@@ -19,7 +19,7 @@
 		compatible = "soc:fpc1020";
 
 		interrupt-parent = <&tlmm>;
-		interrupts = <9 0x0>;
+		interrupts = <9 IRQ_TYPE_LEVEL_HIGH>;
 
 		fpc,gpio_rst    = <&tlmm 8 0>;
 		fpc,gpio_irq    = <&tlmm 9 0>;
@@ -53,7 +53,7 @@
 		spi-max-frequency = <1000000>;
 		input-device-name = "gf3208";
 		interrupt-parent = <&tlmm>;
-		interrupts = <9 0x0>;
+		interrupts = <9 IRQ_TYPE_LEVEL_HIGH>;
 
 		goodix,gpio_reset    = <&tlmm 8 0>;
 		goodix,gpio_irq      = <&tlmm 9 0>;
