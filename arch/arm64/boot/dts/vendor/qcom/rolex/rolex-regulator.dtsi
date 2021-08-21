@@ -16,6 +16,12 @@
 	regulator-always-on;
 };
 
+&soc {
+	restart@4ab000 {
+		qcom,force-warm-reboot;
+	};
+};
+
 &pm8937_pwm {
 	status = "ok";
 	compatible = "qcom,pwm-lpg";
