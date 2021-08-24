@@ -2,13 +2,9 @@
 #include <dt-bindings/iio/qcom,spmi-vadc.h>
 #include <dt-bindings/input/input.h>
 #include "bengal-thermal-overlay.dtsi"
+#include "camera/khaje-camera-sensor-qrd.dtsi"
 #include "bengal-audio-overlay.dtsi"
-#include "bengal-sde-display.dtsi"
-
-&qupv3_se1_i2c {
-	status = "ok";
-	#include "smb1355.dtsi"
-};
+#include "khaje-sde-display.dtsi"
 
 &pm6125_gpios {
 	key_vol_up {
@@ -66,6 +62,50 @@
 
 &usb_qmp_dp_phy {
 	vdd-supply = <&vdda_usb_ss_dp_core>;
+};
+
+&qupv3_se1_i2c {
+	awinic@64 {
+		compatible = "awinic,aw2016_led";
+		reg = <0x64>;
+
+		awinic,red {
+			awinic,name = "red";
+			awinic,id = <0>;
+			awinic,imax = <2>;
+			awinic,led-current = <3>;
+			awinic,max-brightness = <255>;
+			awinic,rise-time-ms = <6>;
+			awinic,hold-time-ms = <0>;
+			awinic,fall-time-ms = <6>;
+			awinic,off-time-ms = <4>;
+		};
+
+		awinic,green {
+			awinic,name = "green";
+			awinic,id = <1>;
+			awinic,imax = <2>;
+			awinic,led-current = <3>;
+			awinic,max-brightness = <255>;
+			awinic,rise-time-ms = <6>;
+			awinic,hold-time-ms = <0>;
+			awinic,fall-time-ms = <6>;
+			awinic,off-time-ms = <4>;
+		};
+
+		awinic,blue {
+			awinic,name = "blue";
+			awinic,id = <2>;
+			awinic,imax = <2>;
+			awinic,led-current = <3>;
+			awinic,max-brightness = <255>;
+			awinic,rise-time-ms = <6>;
+			awinic,hold-time-ms = <0>;
+			awinic,fall-time-ms = <6>;
+			awinic,off-time-ms = <4>;
+		};
+
+	};
 };
 
 &bengal_snd {
@@ -188,21 +228,6 @@
 	status = "ok";
 };
 
-&tlmm {
-	smb_int_default: smb_int_default {
-		mux {
-			pins = "gpio105";
-			function = "gpio";
-		};
-
-		config {
-			pins = "gpio105";
-			bias-pull-up;
-			input-enable;
-		};
-	};
-};
-
 &ufsphy_mem {
 	compatible = "qcom,ufs-phy-qmp-v4";
 
@@ -237,7 +262,7 @@
 };
 
 &dsi_td4330_truly_v2_video {
-	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_no_labibb>;
 	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_pwm";
 	pwms = <&pm6125_pwm 0 0>;
 	qcom,bl-pmic-pwm-period-usecs = <100>;
@@ -247,13 +272,19 @@
 };
 
 &dsi_td4330_truly_v2_cmd {
-	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_no_labibb>;
 	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_pwm";
 	pwms = <&pm6125_pwm 0 0>;
 	qcom,bl-pmic-pwm-period-usecs = <100>;
 	qcom,mdss-dsi-bl-min-level = <1>;
 	qcom,mdss-dsi-bl-max-level = <4095>;
 	qcom,platform-te-gpio = <&tlmm 81 0>;
+	qcom,platform-reset-gpio = <&tlmm 82 0>;
+};
+
+&dsi_sim_vid {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_no_labibb>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
 	qcom,platform-reset-gpio = <&tlmm 82 0>;
 };
 
