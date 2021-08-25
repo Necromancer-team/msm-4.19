@@ -54,3 +54,7 @@
 		qcom,ce-opp-freq = <100000000>;
 	};
 };
+
+&apps_iommu {
+	qcom,no-aarch64;
+};
