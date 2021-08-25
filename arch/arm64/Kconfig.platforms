@@ -460,6 +460,13 @@ config MACH_XIAOMI_ROLEX
 	select MACH_XIAOMI_MSM8917
 	help
 	  This enables support for Xiaomi Redmi 4A(rolex).
+	  
+config MACH_XIAOMI_ROVA
+	bool "Xiaomi Redmi 4A / 5A (Unified)"
+	depends on MACH_XIAOMI
+	depends on ARCH_MSM8917
+	help
+	  Support for Xiaomi Redmi 4A / 5A (Unified).	  
 
 config MACH_XIAOMI_LAND
 	bool "Enable Support for Xiaomi Redmi 3S/3X(land)"
