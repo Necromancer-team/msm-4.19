@@ -18,3 +18,7 @@
 	/delete-node/ fpc_reset_int;
 	/delete-node/ nfc;
 };
+
+&blsp1_uart2 {
+	status = "disabled";
+};
