@@ -6,12 +6,6 @@
 			};
 		};
 	};
-
-	qcom,pm8937@1 {
-		pm8937_s5: spm-regulator@2000 {
-			qcom,mode = "pwm";
-		};
-	};
 };
 
 &ibb_regulator {
@@ -64,8 +58,4 @@
 
 &usb_otg {
 	qcom,usbin-vadc = <&pmi8950_vadc>;
-};
-
-&apc_vreg_corner {
-	/delete-property/ qcom.cpr-enable;
 };
