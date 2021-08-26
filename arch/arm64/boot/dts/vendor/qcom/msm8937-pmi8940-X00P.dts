@@ -25,6 +25,14 @@
         qcom,pmic-id = <0x10019 0x020040 0x0 0x0>;
 };
 
+/{
+	mtp_batterydata: qcom,battery-data {
+		qcom,batt-id-range-pct = <60>;
+		#include "X00P/battery/batterydata-ascent-3700mAh.dtsi"
+		#include "X00P/battery/3340624_Wind_E300cos_4000mAh_averaged_MasterSlave_Feb20th2018_PMI8940.dtsi"
+	};
+};
+
 #include "msm8937-mdss-panels.dtsi"
 //#include "msm8937-camera-sensor-mtp.dtsi"
 
@@ -71,14 +79,6 @@
 		qcom,supply-enable-load = <100000>;
 		qcom,supply-disable-load = <100>;
 		qcom,supply-post-on-sleep = <20>;
-	};
-};
-
-/{
-	mtp_batterydata: qcom,battery-data {
-		qcom,batt-id-range-pct = <60>;
-		#include "X00P/battery/batterydata-ascent-3700mAh.dtsi"
-		#include "X00P/battery/3340624_Wind_E300cos_4000mAh_averaged_MasterSlave_Feb20th2018_PMI8940.dtsi"
 	};
 };
 

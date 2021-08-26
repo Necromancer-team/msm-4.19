@@ -66,119 +66,114 @@
 		interrupts = <110 0x2>;
 		pinctrl-names = "rfstatus";
 		pinctrl-0 = <&rf_int_default>;
-	};
+	}; 
+};
 
-	i2c@78b7000 {
-		status = "ok";
-		  focaltech@38 {
-			compatible = "focaltech,fts"; /* do not modify */
-			reg = <0x38>;
-			interrupt-parent = <&tlmm>;
-			interrupts = <65 0x2008>;
-			//vdd-supply = <&pm8937_l5>;
-			avdd-supply = <&pm8937_l10>;
-			pinctrl-names = "pmx_ts_active","pmx_ts_suspend",
-					"pmx_ts_release";
-			pinctrl-0 = <&ts_int_active &ts_reset_active>;
-			pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
-			pinctrl-2 = <&ts_release>;
-			focaltech,display-coords = <0 0 720 1280>;
-			focaltech,panel-coords = <0 0 1079 1919>;
-			focaltech,reset-gpio = <&tlmm 64 0x00>;
-			focaltech,mag-rst = <&tlmm 44 0x00>;
-			focaltech,irq-gpio = <&tlmm 65 0x2008>;
-			focaltech,max-touch-number = <5>; /* ��󴥵��� */
-			focaltech,disable-gpios;
-			focaltech,button-map = <158 139 172>;
-			focaltech,resume-in-workqueue;
+&i2c_3 {
+	status = "ok";
+	
+	focaltech@38 {
+		compatible = "focaltech,fts"; /* do not modify */
+		reg = <0x38>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <65 0x2008>;
+		//vdd-supply = <&pm8937_l5>;
+		avdd-supply = <&pm8937_l10>;
+		pinctrl-names = "pmx_ts_active","pmx_ts_suspend",
+				"pmx_ts_release";
+		pinctrl-0 = <&ts_int_active &ts_reset_active>;
+		pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
+		pinctrl-2 = <&ts_release>;
+		focaltech,display-coords = <0 0 720 1280>;
+		focaltech,panel-coords = <0 0 1079 1919>;
+		focaltech,reset-gpio = <&tlmm 64 0x00>;
+		focaltech,mag-rst = <&tlmm 44 0x00>;
+		focaltech,irq-gpio = <&tlmm 65 0x2008>;
+		focaltech,max-touch-number = <5>; /* ��󴥵��� */
+		focaltech,disable-gpios;
+		focaltech,button-map = <158 139 172>;
+		focaltech,resume-in-workqueue;
 		/* Underlying clocks used by secure touch */
-			clock-names = "iface_clk", "core_clk";
-			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
-				<&gcc GCC_BLSP1_QUP3_I2C_APPS_CLK>;
-		};
+		clock-names = "iface_clk", "core_clk";
+		clocks = <&gcc GCC_BLSP1_AHB_CLK>,
+			<&gcc GCC_BLSP1_QUP3_I2C_APPS_CLK>;
 	};
-     
-	i2c@78b7000 { 
-		status = "ok";
-		  goodix_ts@5d {
-			compatible = "goodix,gt9xx";
-			reg = <0x5d>;
-			interrupt-parent = <&tlmm>;
-			interrupts = <65 0x2008>;
-			//vdd_ana-supply = <&pm8226_l19>;
-			//vcc_i2c-supply = <&pm8226_lvs1>;
-			avdd-supply = <&pm8937_l10>;
-			goodix,rst-gpio = <&tlmm 64 0x00>;
-			goodix,irq-gpio = <&tlmm 65 0x2008>;
-			pinctrl-names = "eint_as_int","eint_output_low", "eint_output_high", "mag_output_high";
-				pinctrl-0 = <&eint_as_int>;
-				pinctrl-1 = <&eint_output_low>;
-				pinctrl-2 = <&eint_output_high>;
-				pinctrl-3 = <&mag_output_high>;
-						
-				goodix,cfg-group0 = [
-					45 D0 02 A0 05 0A 3C 10 21 CF 2D
-					0F 3C 32 05 F3 00 00 60 62 00 11
-					06 15 16 1A 14 87 27 DD 4C 4E D3
-					07 7C 06 00 A2 34 11 00 0A 03 02
-					19 00 40 0A 0C 62 2A 32 82 88 80
-					A5 0A 1E 1E 04 A9 37 00 91 42 00
-					7C 50 00 6A 62 00 5D 76 00 5D 00
-					00 00 00 F0 50 40 FF F0 17 00 20
-					00 03 00 00 00 00 53 64 04 04 0F
-					28 00 00 00 00 00 0A 50 19 1E 00
-					1E 28 19 18 17 16 15 14 13 12 11
-					10 0F 0E 0B 04 05 0C 0D 08 09 0A
-					03 02 01 00 07 06 FF FF FF FF 00
-					02 04 05 06 08 0A 1E 1F 20 22 24
-					29 2A FF FF FF 78 31 00 00 00 87
-					70 12 00 00 00 00 14 00 7D 0F 66
-					00 44 44 14 88 15 0F 00 00 00 00
-					00 00 00 28 5A 00 00 00 00 32 00
-					06 00 02 05 78 1C 14 14 28 00 00
-					00 00 00 00 00 00 00 00 00 00 00
-					00 00 00 00 00 00 20 01];
-				goodix,cfg-group2 = [
-					45 D0 02 A0 05 0A 3C 10 21 CF 2D
-					0F 55 46 05 F3 00 00 60 62 00 11
-					06 15 16 1A 14 87 27 DD 4C 4E D3
-					07 7C 06 00 C2 33 11 00 00 00 00
-					00 C0 40 0A 0C 64 2A 32 82 88 E0
-					A5 0A 1E 1E 04 8B 37 00 78 42 00
-					67 50 00 5A 62 00 50 76 00 50 00
-					00 00 00 F0 50 40 FF F0 17 00 20
-					00 00 00 00 00 00 53 64 04 04 0F
-					28 00 00 00 00 00 0A 50 00 00 00
-					00 28 19 18 17 16 15 14 13 12 11
-					10 0F 0E 0B 04 05 0C 0D 08 09 0A
-					03 02 01 00 07 06 FF FF FF FF 00
-					02 04 05 06 08 0A 1E 1F 20 22 24
-					29 2A FF FF FF 78 31 00 00 00 87
-					70 12 00 1E 32 32 14 00 7D 0F 66
-					00 44 44 14 88 15 0F 00 00 00 00
-					00 00 00 28 5A 00 00 00 00 32 00
-					06 00 02 05 78 1C 14 14 28 00 00
-					00 7E 02 04 00 00 00 00 00 00 00
-					00 00 00 00 00 00 A2 01];
-			};
+	
+	goodix_ts@5d {
+		compatible = "goodix,gt9xx";
+		reg = <0x5d>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <65 0x2008>;
+		//vdd_ana-supply = <&pm8226_l19>;
+		//vcc_i2c-supply = <&pm8226_lvs1>;
+		avdd-supply = <&pm8937_l10>;
+		goodix,rst-gpio = <&tlmm 64 0x00>;
+		goodix,irq-gpio = <&tlmm 65 0x2008>;
+		pinctrl-names = "eint_as_int","eint_output_low", "eint_output_high", "mag_output_high";
+		pinctrl-0 = <&eint_as_int>;
+		pinctrl-1 = <&eint_output_low>;
+		pinctrl-2 = <&eint_output_high>;
+		pinctrl-3 = <&mag_output_high>;
+				
+		goodix,cfg-group0 = [
+			45 D0 02 A0 05 0A 3C 10 21 CF 2D
+			0F 3C 32 05 F3 00 00 60 62 00 11
+			06 15 16 1A 14 87 27 DD 4C 4E D3
+			07 7C 06 00 A2 34 11 00 0A 03 02
+			19 00 40 0A 0C 62 2A 32 82 88 80
+			A5 0A 1E 1E 04 A9 37 00 91 42 00
+			7C 50 00 6A 62 00 5D 76 00 5D 00
+			00 00 00 F0 50 40 FF F0 17 00 20
+			00 03 00 00 00 00 53 64 04 04 0F
+			28 00 00 00 00 00 0A 50 19 1E 00
+			1E 28 19 18 17 16 15 14 13 12 11
+			10 0F 0E 0B 04 05 0C 0D 08 09 0A
+			03 02 01 00 07 06 FF FF FF FF 00
+			02 04 05 06 08 0A 1E 1F 20 22 24
+			29 2A FF FF FF 78 31 00 00 00 87
+			70 12 00 00 00 00 14 00 7D 0F 66
+			00 44 44 14 88 15 0F 00 00 00 00
+			00 00 00 28 5A 00 00 00 00 32 00
+			06 00 02 05 78 1C 14 14 28 00 00
+			00 00 00 00 00 00 00 00 00 00 00
+			00 00 00 00 00 00 20 01];
+		goodix,cfg-group2 = [
+			45 D0 02 A0 05 0A 3C 10 21 CF 2D
+			0F 55 46 05 F3 00 00 60 62 00 11
+			06 15 16 1A 14 87 27 DD 4C 4E D3
+			07 7C 06 00 C2 33 11 00 00 00 00
+			00 C0 40 0A 0C 64 2A 32 82 88 E0
+			A5 0A 1E 1E 04 8B 37 00 78 42 00
+			67 50 00 5A 62 00 50 76 00 50 00
+			00 00 00 F0 50 40 FF F0 17 00 20
+			00 00 00 00 00 00 53 64 04 04 0F
+			28 00 00 00 00 00 0A 50 00 00 00
+			00 28 19 18 17 16 15 14 13 12 11
+			10 0F 0E 0B 04 05 0C 0D 08 09 0A
+			03 02 01 00 07 06 FF FF FF FF 00
+			02 04 05 06 08 0A 1E 1F 20 22 24
+			29 2A FF FF FF 78 31 00 00 00 87
+			70 12 00 1E 32 32 14 00 7D 0F 66
+			00 44 44 14 88 15 0F 00 00 00 00
+			00 00 00 28 5A 00 00 00 00 32 00
+			06 00 02 05 78 1C 14 14 28 00 00
+			00 7E 02 04 00 00 00 00 00 00 00
+			00 00 00 00 00 00 A2 01];
 	};
 
-	i2c@78b7000 { 
-		status = "ok";
-		  himax-ts@48 {
-			compatible = "himax,hxcommon";
-			reg = <0x48>;
-			interrupt-parent = <&tlmm>;
-			interrupts = <65 0x2008>;
-			//vdd_ana-supply = <&pm8226_l19>;
-			//vcc_i2c-supply = <&pm8226_lvs1>;
-			avdd-supply = <&pm8937_l10>;
-			himax,rst-gpio = <&tlmm 64 0x00>;
-			himax,irq-gpio = <&tlmm 65 0x2008>;
-			himax,display-coords = <0 720 0 1440 >;
-			himax,panel-coords = <0 720 0 1440>;
-			pinctrl-names = "mag_output_high";
-			pinctrl-0 = <&mag_output_high>;
-			};
-		};   
+	himax-ts@48 {
+		compatible = "himax,hxcommon";
+		reg = <0x48>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <65 0x2008>;
+		//vdd_ana-supply = <&pm8226_l19>;
+		//vcc_i2c-supply = <&pm8226_lvs1>;
+		avdd-supply = <&pm8937_l10>;
+		himax,rst-gpio = <&tlmm 64 0x00>;
+		himax,irq-gpio = <&tlmm 65 0x2008>;
+		himax,display-coords = <0 720 0 1440 >;
+		himax,panel-coords = <0 720 0 1440>;
+		pinctrl-names = "mag_output_high";
+		pinctrl-0 = <&mag_output_high>;
+	};
 };

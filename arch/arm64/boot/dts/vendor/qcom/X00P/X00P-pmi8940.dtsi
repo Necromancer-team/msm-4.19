@@ -13,59 +13,62 @@
 
 #include <dt-bindings/msm/power-on.h>
 
+&pmi8940_vadc {
+	chan@10 {
+		label = "mpp1";
+		reg = <0x10>;
+		qcom,decimation = <0>;
+		qcom,pre-div-channel-scaling = <0>;
+		qcom,calibration-type = "absolute";
+		qcom,scale-function = <0>;  //0
+		qcom,hw-settle-time = <4>;
+		qcom,fast-avg-setup = <2>;
+	};
+};
+
+&pmi8940_mpps {
+	mpp@a000 {
+		qcom,mode = <4>;
+		qcom,src-sel = <0>;
+		qcom,ain-route = <0>;
+		qcom,master-en = <1>;
+		status = "okay"; 
+	};
+};
+
+&qpnp_smbcharger {
+	qcom,float-voltage-mv = <4350>;
+	/delete-property/ qcom,autoadjust-vfloat;
+	qcom,usbin-vadc = <&pmi8940_vadc>;
+	qcom,jeita-temp-hard-limit =<1>;
+	qcom,mpp1-vadc = <&pmi8940_vadc>;	
+};
+
+&qpnp_fg {
+	qcom,resume-soc = <98>;
+	qcom,fg-iterm-ma = <240>;
+	qcom,fg-chg-iterm-ma = <150>;
+	qcom,fg-cutoff-voltage-mv = <3400>;
+	qcom,irq-volt-empty-mv = <3000>;
+	qcom,fg-cc-cv-threshold-mv = <4330>;
+	qcom,hot-bat-decidegc = <600>;
+	qcom,cold-bat-decidegc = <0>;
+	qcom,warm-bat-decidegc = <600>;
+	qcom,cool-bat-decidegc = <0>;
+};
+
+&pmi8940_pwm {
+	qcom,dtest-line = <1>;
+	qcom,dtest-output = <1>;
+};
+
+&wled {
+	/delete-property/qcom,en-ext-pfet-sc-pro;
+};
+
 &spmi_bus {
-
 	qcom,pmi8940@2 {
-
-		pmi8940_vadc: vadc@3100 {
-
-			chan@10 {
-				label = "mpp1";
-				reg = <0x10>;
-				qcom,decimation = <0>;
-				qcom,pre-div-channel-scaling = <0>;
-				qcom,calibration-type = "absolute";
-				qcom,scale-function = <0>;  //0
-				qcom,hw-settle-time = <4>;
-				qcom,fast-avg-setup = <2>;
-			};
-		};
-
-		pmi8940_mpps: mpps {
-
-			mpp@a000 {
-				qcom,mode = <4>;
-				qcom,src-sel = <0>;
-				qcom,ain-route = <0>;
-				qcom,master-en = <1>;
-				status = "okay"; 
-			};
-
-		};
-
-		pmi8940_charger: qcom,qpnp-smbcharger {
-			qcom,float-voltage-mv = <4350>;
-			/delete-property/ qcom,autoadjust-vfloat;
-			qcom,usbin-vadc = <&pmi8940_vadc>;
-			qcom,jeita-temp-hard-limit =<1>;
-			qcom,mpp1-vadc = <&pmi8940_vadc>;	
-		};
-
-		pmi8940_fg: qcom,fg {
-			qcom,resume-soc = <98>;
-			qcom,fg-iterm-ma = <240>;
-			qcom,fg-chg-iterm-ma = <150>;
-			qcom,fg-cutoff-voltage-mv = <3400>;
-			qcom,irq-volt-empty-mv = <3000>;
-			qcom,fg-cc-cv-threshold-mv = <4330>;
-			qcom,hot-bat-decidegc = <600>;
-			qcom,cold-bat-decidegc = <0>;
-			qcom,warm-bat-decidegc = <600>;
-			qcom,cool-bat-decidegc = <0>;
-		};
-
 		qcom,leds@a100 {
-
 			qcom,led_mpp_2 {
 				label = "mpp";
 				linux,name = "green";
@@ -82,18 +85,6 @@
 				qcom,default-state = "off";  
 				pwm-names = "green";
 			};
-		};
-	};
-
-	qcom,pmi8940@3 {
-
-		pmi8940_pwm: pwm@b000 {
-			qcom,dtest-line = <1>;
-			qcom,dtest-output = <1>;
-		};
-
-		wled: qcom,leds@d800 {
-			/delete-property/qcom,en-ext-pfet-sc-pro;
 		};
 	};
 };
