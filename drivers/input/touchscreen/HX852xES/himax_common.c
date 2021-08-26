@@ -1832,15 +1832,15 @@ int himax_chip_common_probe(struct i2c_client *client, const struct i2c_device_i
     bool auto_update_flag = false;
     struct himax_ts_data *ts;
     struct himax_i2c_platform_data *pdata;
-	extern int tp_flag;
+	//extern int tp_flag;
 
     //Check I2C functionality
 	printk("himax probe_begin %s %d\n", __func__, __LINE__);
 	
-	if (tp_flag) {
+	/*if (tp_flag) {
 		printk("other tp have registered, exit himax probe\n");
 		return -EINVAL;
-	}
+	}*/
 	
 	
     if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
@@ -1919,7 +1919,7 @@ int himax_chip_common_probe(struct i2c_client *client, const struct i2c_device_i
         goto err_ic_package_failed;
     }
 
-	tp_flag = 1; //hebiao added for tp conpatible
+	//tp_flag = 1; //hebiao added for tp conpatible
 
 //added by hebiao for mag rst high begin
 	himax_mag_rst_high(ts);  //added by hebiao for mag rst high
