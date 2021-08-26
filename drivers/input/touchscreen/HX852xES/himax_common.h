@@ -35,7 +35,6 @@
 #include <linux/types.h>
 #include <linux/fs.h>
 #include <linux/buffer_head.h>
-#include <linux/wakelock.h>
 #include <linux/seq_file.h>
 #include <linux/proc_fs.h>
 #include "himax_platform.h"
@@ -318,7 +317,7 @@ struct himax_ts_data
 #ifdef HX_SMART_WAKEUP
     uint8_t SMWP_enable;
     uint8_t gesture_cust_en[16];
-    struct wake_lock ts_SMWP_wake_lock;
+    struct wakeup_source *ts_SMWP_wake_lock;
 #endif
 
 #ifdef HX_HIGH_SENSE
