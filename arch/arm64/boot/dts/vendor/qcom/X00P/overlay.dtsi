@@ -3,6 +3,6 @@
 #include "X00P-pinctrl.dtsi"
 #include "X00P-mtp.dtsi"
 #include "X00P-mdss.dtsi"
-#include "X00P-camera.dtsi"
+//#include "X00P-camera.dtsi"
 #include "X00P-pm8937.dtsi"
 #include "X00P-pmi8940.dtsi"
