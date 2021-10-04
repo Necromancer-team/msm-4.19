@@ -2032,7 +2032,7 @@ static struct clk_branch gcc_bimc_gfx_clk = {
 
 static struct clk_branch gcc_gfx_tbu_clk = {
 	.halt_reg = 0x12010,
-	.halt_check = BRANCH_VOTED,
+	.halt_check = BRANCH_HALT_VOTED,
 	.clkr = {
 		.enable_reg = 0x3600C,
 		.enable_mask = BIT(3),
@@ -2045,7 +2045,7 @@ static struct clk_branch gcc_gfx_tbu_clk = {
 
 static struct clk_branch gcc_gfx_tcu_clk = {
 	.halt_reg = 0x12020,
-	.halt_check = BRANCH_VOTED,
+	.halt_check = BRANCH_HALT_VOTED,
 	.clkr = {
 		.enable_reg = 0x3600C,
 		.enable_mask = BIT(2),
@@ -2058,7 +2058,7 @@ static struct clk_branch gcc_gfx_tcu_clk = {
 
 static struct clk_branch gcc_gtcu_ahb_clk = {
 	.halt_reg = 0x12044,
-	.halt_check = BRANCH_VOTED,
+	.halt_check = BRANCH_HALT_VOTED,
 	.clkr = {
 		.enable_reg = 0x3600C,
 		.enable_mask = BIT(13),
@@ -3869,7 +3869,7 @@ static struct clk_branch gcc_venus0_vcodec0_clk = {
 
 static struct clk_branch gcc_apss_tcu_clk = {
 	.halt_reg = 0x12018,
-	.halt_check = BRANCH_VOTED,
+	.halt_check = BRANCH_HALT_VOTED,
 	.clkr = {
 		.enable_reg = 0x4500c,
 		.enable_mask = BIT(1),
@@ -3882,7 +3882,7 @@ static struct clk_branch gcc_apss_tcu_clk = {
 
 static struct clk_branch gcc_cpp_tbu_clk = {
 	.halt_reg = 0x12040,
-	.halt_check = BRANCH_VOTED,
+	.halt_check = BRANCH_HALT_VOTED,
 	.clkr = {
 		.enable_reg = 0x3600C,
 		.enable_mask = BIT(14),
@@ -3895,7 +3895,7 @@ static struct clk_branch gcc_cpp_tbu_clk = {
 
 static struct clk_branch gcc_jpeg_tbu_clk = {
 	.halt_reg = 0x12034,
-	.halt_check = BRANCH_VOTED,
+	.halt_check = BRANCH_HALT_VOTED,
 	.clkr = {
 		.enable_reg = 0x3600C,
 		.enable_mask = BIT(10),
@@ -3908,7 +3908,7 @@ static struct clk_branch gcc_jpeg_tbu_clk = {
 
 static struct clk_branch gcc_mdp_tbu_clk = {
 	.halt_reg = 0x1201c,
-	.halt_check = BRANCH_VOTED,
+	.halt_check = BRANCH_HALT_VOTED,
 	.clkr = {
 		.enable_reg = 0x4500c,
 		.enable_mask = BIT(4),
@@ -3921,7 +3921,7 @@ static struct clk_branch gcc_mdp_tbu_clk = {
 
 static struct clk_branch gcc_smmu_cfg_clk = {
 	.halt_reg = 0x12038,
-	.halt_check = BRANCH_VOTED,
+	.halt_check = BRANCH_HALT_VOTED,
 	.clkr = {
 		.enable_reg = 0x3600C,
 		.enable_mask = BIT(12),
@@ -3934,7 +3934,7 @@ static struct clk_branch gcc_smmu_cfg_clk = {
 
 static struct clk_branch gcc_venus_tbu_clk = {
 	.halt_reg = 0x12014,
-	.halt_check = BRANCH_VOTED,
+	.halt_check = BRANCH_HALT_VOTED,
 	.clkr = {
 		.enable_reg = 0x3600C,
 		.enable_mask = BIT(5),
@@ -3947,7 +3947,7 @@ static struct clk_branch gcc_venus_tbu_clk = {
 
 static struct clk_branch gcc_vfe_tbu_clk = {
 	.halt_reg = 0x1203C,
-	.halt_check = BRANCH_VOTED,
+	.halt_check = BRANCH_HALT_VOTED,
 	.clkr = {
 		.enable_reg = 0x3600C,
 		.enable_mask = BIT(9),
@@ -3960,7 +3960,7 @@ static struct clk_branch gcc_vfe_tbu_clk = {
 
 static struct clk_branch gcc_vfe1_tbu_clk = {
 	.halt_reg = 0x12090,
-	.halt_check = BRANCH_VOTED,
+	.halt_check = BRANCH_HALT_VOTED,
 	.clkr = {
 		.enable_reg = 0x3600C,
 		.enable_mask = BIT(17),
@@ -3973,7 +3973,7 @@ static struct clk_branch gcc_vfe1_tbu_clk = {
 
 static struct clk_branch gcc_qdss_dap_clk = {
 	.halt_reg = 0x29084,
-	.halt_check = BRANCH_VOTED,
+	.halt_check = BRANCH_HALT_VOTED,
 	.clkr = {
 		.enable_reg = 0x45004,
 		.enable_mask = BIT(21),
@@ -3986,7 +3986,7 @@ static struct clk_branch gcc_qdss_dap_clk = {
 
 static struct clk_branch gcc_ipa_tbu_clk = {
 	.halt_reg = 0x120A0,
-	.halt_check = BRANCH_VOTED,
+	.halt_check = BRANCH_HALT_VOTED,
 	.clkr = {
 		.enable_reg = 0x4500C,
 		.enable_mask = BIT(16),
