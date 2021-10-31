@@ -1238,7 +1238,7 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
 		is_sdm439 = 1;
 	}
 	
-	if (is_sdm439 && !is_msm8940) {
+	if ((is_sdm439 || is_qm215) && !is_msm8940) {
 		rpm_clk_qm215.clks[RPM_SMD_IPA_CLK] = NULL;
 		rpm_clk_qm215.clks[RPM_SMD_IPA_A_CLK] = NULL;
 	}
