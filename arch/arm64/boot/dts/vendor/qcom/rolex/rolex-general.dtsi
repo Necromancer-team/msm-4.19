@@ -234,11 +234,6 @@
     qcom,vdd-always-on;
 };
 
-/* Fix iommu */
-&apps_iommu {
-	qcom,no-aarch64;
-};
-
 /* Missing clock-frequency property */
 &CPU0 {
 	clock-frequency = <1401000000>;
