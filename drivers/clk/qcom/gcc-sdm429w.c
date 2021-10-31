@@ -4449,6 +4449,7 @@ static int gcc_sdm429w_probe(struct platform_device *pdev)
 	struct clk *clk;
 	int ret, speed_bin;
 	bool qm215, is_sdm439, msm8937, msm8940;
+	u32 val;
 
 	qm215 = of_device_is_compatible(pdev->dev.of_node,
 						"qcom,gcc-qm215");
@@ -4489,6 +4490,13 @@ static int gcc_sdm429w_probe(struct platform_device *pdev)
 		/* Configure Sleep and Wakeup cycles for GMEM clock */
 		regmap_update_bits(regmap, gcc_oxili_gmem_clk.clkr.enable_reg,
 				0xff0, 0xff0);
+	}
+	else {
+		/* Configure Sleep and Wakeup cycles for OXILI clock */
+		val = regmap_read(regmap, 0x59020, &val);
+		val &= ~0xF0;
+		val |= (0 << 4);
+		regmap_write(regmap, 0x59020, val);
 	}
 
 	if (is_sdm439)
