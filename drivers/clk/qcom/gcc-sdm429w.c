@@ -4481,7 +4481,14 @@ static int gcc_sdm429w_probe(struct platform_device *pdev)
 	regmap = qcom_cc_map(pdev, &gcc_sdm429w_desc);
 	if (IS_ERR(regmap))
 		return PTR_ERR(regmap);
-
+	
+	if (is_sdm439 || msm8937 || msm8940) {
+		/* Oxili Ocmem in GX rail: OXILI_GMEM_CLAMP_IO */
+		val = regmap_read(regmap, 0x5B00C, &val);
+		val &= ~BIT(0);
+		regmap_write(regmap, 0x5B00C, val);
+	}
+	
 	if (qm215) {
 		speed_bin = 0;
 		get_speed_bin(pdev, &speed_bin);
