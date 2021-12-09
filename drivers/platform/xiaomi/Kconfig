@@ -17,7 +17,7 @@ config MACH_XIAOMI_PRADA
 
 config MACH_XIAOMI_ROVA
 	bool "Xiaomi Redmi 4A / 5A (Unified)"
-	depends on ARCH_MSM8917
+	depends on ARCH_MSM8937
 	help
 	  Support for Xiaomi Redmi 4A / 5A (Unified).
 
@@ -35,14 +35,14 @@ config MACH_XIAOMI_SANTONI
 
 config MACH_XIAOMI_TIARE
 	bool "Xiaomi Redmi Go"
-	depends on ARCH_MSM8917
+	depends on ARCH_MSM8937
 	depends on !MACH_XIAOMI_ROVA
 	help
 	  Support for Xiaomi Redmi Go.
 
 config MACH_XIAOMI_ULYSSE
 	bool "Xiaomi Redmi Note 5A (Unified)"
-	depends on ARCH_MSM8917
+	depends on ARCH_MSM8937
 	depends on ARCH_MSM8940
 	help
 	  Support for Xiaomi Redmi Note 5A (Unified).
