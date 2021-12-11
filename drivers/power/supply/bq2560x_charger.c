@@ -29,7 +29,7 @@
 #include <linux/of_device.h>
 #include <linux/of_gpio.h>
 #include <linux/err.h>
-#include <linux/extcon.h>
+#include <linux/extcon-provider.h>
 #include <linux/regulator/driver.h>
 #include <linux/regulator/of_regulator.h>
 #include <linux/regulator/machine.h>
@@ -1588,7 +1588,7 @@ static int bq2560x_handle_usb_insertion(struct bq2560x *bq)
 	/*for cdp detect*/
 	msleep(10);
 
-	ret = extcon_set_cable_state_(bq->extcon, EXTCON_USB, bq->usb_present);
+	ret = extcon_set_state_sync(bq->extcon, EXTCON_USB, bq->usb_present);
 	if (ret < 0)
 		pr_err("Couldn't set extcon cable state to %d, ret=%d\n", bq->usb_present, ret);
 
@@ -1623,7 +1623,7 @@ static int bq2560x_handle_usb_removal(struct bq2560x *bq)
 		goto err;
 	}
 
-	ret = extcon_set_cable_state_(bq->extcon, EXTCON_USB, false);
+	ret = extcon_set_state_sync(bq->extcon, EXTCON_USB, false);
 	if (ret < 0)
 		pr_err("Couldn't set extcon cable state to false, ret=%d\n", ret);
 
