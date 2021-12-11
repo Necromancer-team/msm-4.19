@@ -22,7 +22,8 @@
 		vcc_i2c-supply = <&pm8937_l5>;
 		interrupt-parent = <&tlmm>;
 		interrupts = <25 2>;
-		qcom,battid-vadc = <&pm8937_vadc>;
+		io-channels = <&pm8937_vadc VADC_P_MUX4_1_1>;
+		io-channel-names = "batt_id";
 		pinctrl-names = "default";
 		pinctrl-0 = <&bq_int_default>;
 	};
