@@ -836,11 +836,11 @@ void ulysse_wcd_enable_mbhc_supply(struct wcd_mbhc *mbhc,
 			enum wcd_mbhc_plug_type plug_type)
 {
 
-	struct snd_soc_codec *codec = mbhc->codec;
+	struct snd_soc_component *component = mbhc->component;
 
 	if (ulysse_det_extn_cable_en && mbhc->is_extn_cable &&
 		mbhc->mbhc_cb && mbhc->mbhc_cb->extn_use_mb &&
-		mbhc->mbhc_cb->extn_use_mb(codec)) {
+		mbhc->mbhc_cb->extn_use_mb(component)) {
 		if (plug_type == MBHC_PLUG_TYPE_HEADPHONE ||
 		    plug_type == MBHC_PLUG_TYPE_HEADSET)
 			wcd_enable_curr_micbias(mbhc, WCD_MBHC_EN_MB);
@@ -913,7 +913,7 @@ void wcd_mbhc_find_plug_and_report(struct wcd_mbhc *mbhc,
 			if ((mbhc->zl > 20000) && (mbhc->zr > 20000)) {
 				pr_debug("%s: special accessory \n", __func__);
 				if (mbhc->mbhc_cfg->swap_gnd_mic &&
-					mbhc->mbhc_cfg->swap_gnd_mic(mbhc->codec, true)) {
+					mbhc->mbhc_cfg->swap_gnd_mic(mbhc->component, true)) {
 					pr_debug("%s: US_EU gpio present,flip switch again\n"
 					, __func__);
 				}
@@ -952,7 +952,7 @@ void wcd_mbhc_find_plug_and_report(struct wcd_mbhc *mbhc,
 				if ((mbhc->zl > 20000) && (mbhc->zr > 20000)) {
 					pr_debug("tsx_hph_%s: special accessory \n", __func__);
 					if (mbhc->mbhc_cfg->swap_gnd_mic &&
-					mbhc->mbhc_cfg->swap_gnd_mic(mbhc->codec, true)) {
+					mbhc->mbhc_cfg->swap_gnd_mic(mbhc->component, true)) {
 					pr_debug("%s: US_EU gpio present,flip switch again\n"
 					, __func__);
 					}
@@ -1144,10 +1144,10 @@ static void wcd_mbhc_swch_irq_handler(struct wcd_mbhc *mbhc)
 			jack_type = SND_JACK_ANC_HEADPHONE;
 #ifdef CONFIG_MACH_XIAOMI_ULYSSE
 			if (xiaomi_series_read() == XIAOMI_SERIES_ULYSSE) {
-				mbhc->mbhc_cb->irq_control(codec,
+				mbhc->mbhc_cb->irq_control(component,
 						mbhc->intr_ids->mbhc_hs_rem_intr,
 						false);
-				mbhc->mbhc_cb->irq_control(codec,
+				mbhc->mbhc_cb->irq_control(component,
 						mbhc->intr_ids->mbhc_hs_ins_intr,
 						false);
 			}

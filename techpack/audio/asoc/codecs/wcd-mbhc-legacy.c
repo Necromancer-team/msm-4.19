@@ -493,7 +493,7 @@ static void wcd_correct_swch_plug(struct work_struct *work)
 
 #if defined(CONFIG_MACH_XIAOMI_LAND) || defined(CONFIG_MACH_XIAOMI_SANTONI)
 	if (xiaomi_series_read() == XIAOMI_SERIES_LANDTONI) {
-		landtoni_detection_type = (snd_soc_read(codec,
+		landtoni_detection_type = (snd_soc_component_read32(component,
 					MSM89XX_PMIC_ANALOG_MBHC_DET_CTL_1)) & 0x20;
 
 		if (landtoni_detection_type)
@@ -857,7 +857,7 @@ exit:
 	if (mbhc->mbhc_cb->set_cap_mode) {
 	#if defined(CONFIG_MACH_XIAOMI_ROVA) || defined(CONFIG_MACH_XIAOMI_TIARE)
 		if (xiaomi_series_read() == XIAOMI_SERIES_ROVA || plug_type == MBHC_PLUG_TYPE_HEADSET) {
-			mbhc->mbhc_cb->set_cap_mode(codec, micbias1, true);
+			mbhc->mbhc_cb->set_cap_mode(component, micbias1, true);
 			pr_debug("%s:set_cap_mode micbias1=%d, micbias2 = %d==>true , MBHC_PLUG_TYPE_HEADSET\n", __func__, micbias1, micbias2);
 		} else
 	#endif

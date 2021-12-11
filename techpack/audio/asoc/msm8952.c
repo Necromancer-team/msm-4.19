@@ -41,7 +41,7 @@ extern int xiaomi_series_read(void);
 #endif
 
 #ifdef CONFIG_MACH_XIAOMI_ULYSSE
-#include <linux/sched.h>
+#include <linux/sched/types.h>
 #endif
 
 #if defined(CONFIG_MACH_XIAOMI_SANTONI) && defined(CONFIG_SND_SOC_AW87319)
