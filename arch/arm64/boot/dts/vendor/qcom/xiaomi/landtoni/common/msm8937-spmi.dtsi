@@ -1,0 +1,50 @@
+&apc_vreg_corner {
+	qcom,cpr-voltage-floor = <1150000 1150000 1250000>;
+};
+
+&pm8937_l6 {
+	regulator-always-on;
+};
+
+&spmi_bus {
+	qcom,pm8937@0 {
+		qcom,power-on@800 {
+			qcom,store-hard-reset-reason;
+			qcom,pon_1 {
+				qcom,support-reset = <1>;
+				qcom,s2-timer = <2000>;
+				qcom,s2-type = <7>;
+			};
+		};
+	};
+};
+
+&flash_led {
+	/delete-node/ qcom,flash_1;
+	/delete-node/ qcom,torch_1;
+/*
+	pmi8950_torch2: qcom,torch_2 {
+		label = "torch";
+		qcom,led-name = "flashlight";
+		qcom,default-led-trigger =
+				"torch2_trigger";
+		qcom,max-current = <200>;
+		qcom,id = <1>;
+		qcom,current = <100>;
+	};
+*/
+};
+
+&pmi8950_torch0 {
+	qcom,led-name = "flashlight";
+};
+
+&pmi_haptic {
+	qcom,vmax-mv = <2700>;
+	wf_0 { qcom,wf-vmax-mv = <2700>; };
+	wf_1 { qcom,wf-vmax-mv = <2700>; };
+	wf_2 { qcom,wf-vmax-mv = <2700>; };
+	wf_3 { qcom,wf-vmax-mv = <2700>; };
+	wf_4 { qcom,wf-vmax-mv = <2700>; };
+	wf_5 { qcom,wf-vmax-mv = <2700>; };
+};
