@@ -41,6 +41,7 @@
 #include <linux/debugfs.h>
 #include <linux/alarmtimer.h>
 #include <linux/qpnp/qpnp-adc.h>
+#include <linux/iio/consumer.h>
 #include "bqfs_cmd_type.h"
 
 #ifdef CONFIG_MACH_XIAOMI
@@ -298,7 +299,7 @@ struct bq_fg_chip {
 	struct power_supply *fg_psy;
 	struct power_supply_desc fg_psy_d;
 
-	struct qpnp_vadc_chip	*vadc_dev;
+	struct iio_channel		*batt_id_chan;
 	struct regulator		*vdd;
 	u32	connected_rid;
 
@@ -1034,15 +1035,15 @@ static int riva_fg_get_battid_resister(struct bq_fg_chip *bq)
 {
 	int rc = 0;
 	int bq_battid_resister = 0;
-	struct qpnp_vadc_result results;
+	int res = 0;
 
-	rc = qpnp_vadc_read(bq->vadc_dev, P_MUX4_1_1, &results);
+	rc = iio_read_channel_processed(bq->batt_id_chan, &res);
 	if (rc) {
 		pr_debug("Unable to read batt resister rc=%d\n", rc);
 		return RIVA_DEFAULT_RESISTER;
 	}
 
-	bq_battid_resister = (results.physical)*100/(1800000 - results.physical);
+	bq_battid_resister = (res)*100/(1800000 - res);
 
 	return bq_battid_resister;
 }
@@ -2076,7 +2077,7 @@ static int fg_parse_batt_id(struct bq_fg_chip *bq)
 	int rc = 0, rpull = 0, vref = 0;
 	int64_t denom, batt_id_uv;
 	struct device_node *node = bq->dev->of_node;
-	struct qpnp_vadc_result result;
+	int res = 0;
 
 	bq->vdd = regulator_get(bq->dev, "vdd");
 	if (IS_ERR(bq->vdd)) {
@@ -2111,7 +2112,7 @@ static int fg_parse_batt_id(struct bq_fg_chip *bq)
 	}
 	pr_err("fg_parse_batt_id begin read battery ID \n");
 	/* read battery ID */
-	rc = qpnp_vadc_read(bq->vadc_dev, P_MUX2_1_1, &result);
+	rc = iio_read_channel_processed(bq->batt_id_chan, &res);
 	if (rc) {
 		pr_err("error reading batt id channel = %d, rc = %d\n",
 					LR_MUX2_BAT_ID, rc);
@@ -2119,7 +2120,7 @@ static int fg_parse_batt_id(struct bq_fg_chip *bq)
 	}
 
 	
-	batt_id_uv = result.physical;
+	batt_id_uv = res;
 	
 
 	pr_err("fg_parse_batt_id  batt_id_uv = %lld\n",batt_id_uv);
@@ -2209,16 +2210,16 @@ static int bq_fg_probe(struct i2c_client *client,
 
 #ifdef CONFIG_MACH_XIAOMI_ROVA
 	if (xiaomi_device_read() == XIAOMI_DEVICE_RIVA)
-		bq->vadc_dev = qpnp_get_vadc(bq->dev, "battid");
+		bq->batt_id_chan = iio_channel_get(bq->dev, "batt_id");
 	else
 #endif
-	bq->vadc_dev = qpnp_get_vadc(bq->dev, "batt_id");
-	if (IS_ERR(bq->vadc_dev)) {
-		ret = PTR_ERR(bq->vadc_dev);
+	bq->batt_id_chan = iio_channel_get(bq->dev, "batt_id");
+	if (IS_ERR(bq->batt_id_chan)) {
+		ret = PTR_ERR(bq->batt_id_chan);
 		if (ret == -EPROBE_DEFER)
-			pr_err("vadc not found - defer rc=%d\n", ret);
+			pr_err("batt_id channel not found - defer rc=%d\n", ret);
 		else
-			pr_err("vadc property missing, rc=%d\n", ret);
+			pr_err("batt_id property missing, rc=%d\n", ret);
 
 		return ret;
 	}
