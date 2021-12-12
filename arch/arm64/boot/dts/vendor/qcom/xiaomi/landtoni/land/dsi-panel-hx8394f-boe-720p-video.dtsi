@@ -125,8 +125,5 @@
 		qcom,mdss-dsi-lp11-init;
 		qcom,mdss-dsi-init-delay-us = <50000>;
 		qcom,mdss-dsi-tx-eot-append;
-		qcom,ulps-enabled;
-		qcom,suspend-ulps-enabled;
-		qcom,panel-allow-phy-poweroff;
 	};
 };
