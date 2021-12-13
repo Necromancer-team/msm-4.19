@@ -41,7 +41,7 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&smb_int_default>;
 		regulator-name = "bq2560x_otg_vreg";
-		ti,bq2560x,chip-enable-gpio = <48>;
+		ti,bq2560x,chip-enable-gpio = <&tlmm 48 0>;
 		ti,bq2560x,usb-vlim = <4500>;
 		ti,bq2560x,usb-ilim = <500>;
 		ti,bq2560x,usb-vreg = <4400>;
