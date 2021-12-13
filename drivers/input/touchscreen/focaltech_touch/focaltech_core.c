@@ -48,6 +48,11 @@
 #endif
 #include "focaltech_core.h"
 
+#ifdef CONFIG_MACH_XIAOMI
+#include <linux/xiaomi_device.h>
+extern int xiaomi_device_read(void);
+#endif
+
 /*****************************************************************************
 * Private constant and macro definitions using #define
 *****************************************************************************/
@@ -1374,6 +1379,7 @@ static int fts_ts_probe_entry(struct fts_ts_data *ts_data)
 {
 	int ret = 0;
 	int pdata_size = sizeof(struct fts_ts_platform_data);
+	u8 reg_value = 0;
 
 	FTS_FUNC_ENTER();
 	FTS_INFO("%s", FTS_DRIVER_VERSION);
@@ -1440,6 +1446,14 @@ static int fts_ts_probe_entry(struct fts_ts_data *ts_data)
 
 #if (!FTS_CHIP_IDC)
 	fts_reset_proc(200);
+#endif
+
+#ifdef CONFIG_MACH_XIAOMI_SANTONI
+	if (xiaomi_device_read() == XIAOMI_DEVICE_SANTONI) {
+		ret = fts_read_reg(FTS_REG_CHIP_ID, &reg_value);
+		if (ret < 0)
+			ts_data->client->addr = 0x3E;
+	}
 #endif
 
 	ret = fts_get_ic_information(ts_data);
