@@ -82,7 +82,7 @@
         };
 
         focaltech@38{
-            compatible = "focaltech,ft5435";
+            compatible = "focaltech,fts_ts";
             reg = <0x38>;
             interrupt-parent = <&tlmm>;
             interrupts = <65 0x2008>;
