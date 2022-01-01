@@ -4385,7 +4385,7 @@ static void fixup_for_msm8937(struct platform_device *pdev,
 
 	gpll3_out_main.vco_table = gpll3_vco_msm8937;
 	gpll3_out_main.num_vco = ARRAY_SIZE(gpll3_vco_msm8937);
-	gpll3_out_main.clkr.hw.init->rate_max[VDD_LOW_L1] = 525000000;
+	gpll3_out_main.clkr.hw.init->rate_max[VDD_LOW_L1] = 0;
 	gpll3_out_main.clkr.hw.init->rate_max[VDD_NOMINAL] = 1066000000;
 
 	/*
@@ -4425,7 +4425,7 @@ static void fixup_for_msm8940(struct platform_device *pdev,
 
 	gpll3_out_main.vco_table = gpll3_vco_msm8937;
 	gpll3_out_main.num_vco = ARRAY_SIZE(gpll3_vco_msm8937);
-	gpll3_out_main.clkr.hw.init->rate_max[VDD_LOW_L1] = 525000000;
+	gpll3_out_main.clkr.hw.init->rate_max[VDD_LOW_L1] = 0;
 	gpll3_out_main.clkr.hw.init->rate_max[VDD_NOMINAL] = 1066000000;
 
 	/*
