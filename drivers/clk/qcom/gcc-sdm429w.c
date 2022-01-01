@@ -4376,6 +4376,13 @@ static void fixup_for_msm8937(struct platform_device *pdev,
 	gcc_oxili_gfx3d_clk.clkr.hw.init->rate_max[VDD_NOMINAL_L1] = 400000000;
 	gcc_oxili_gfx3d_clk.clkr.hw.init->rate_max[VDD_HIGH] = 450000000;
 
+	gcc_oxili_aon_clk.clkr.hw.init->rate_max[VDD_LOW] = 216000000;
+	gcc_oxili_aon_clk.clkr.hw.init->rate_max[VDD_LOW_L1] = 300000000;
+	gcc_oxili_aon_clk.clkr.hw.init->rate_max[VDD_NOMINAL] = 375000000;
+	gcc_oxili_aon_clk.clkr.hw.init->rate_max[VDD_NOMINAL_L1] = 400000000;
+	gcc_oxili_aon_clk.clkr.hw.init->rate_max[VDD_HIGH] = 450000000;
+
+
 	gpll3_out_main.vco_table = gpll3_vco_msm8937;
 	gpll3_out_main.num_vco = ARRAY_SIZE(gpll3_vco_msm8937);
 	gpll3_out_main.clkr.hw.init->rate_max[VDD_LOW_L1] = 525000000;
@@ -4409,6 +4416,12 @@ static void fixup_for_msm8940(struct platform_device *pdev,
 	gcc_oxili_gfx3d_clk.clkr.hw.init->rate_max[VDD_NOMINAL] = 375000000;
 	gcc_oxili_gfx3d_clk.clkr.hw.init->rate_max[VDD_NOMINAL_L1] = 400000000;
 	gcc_oxili_gfx3d_clk.clkr.hw.init->rate_max[VDD_HIGH] = 475000000;
+
+	gcc_oxili_aon_clk.clkr.hw.init->rate_max[VDD_LOW] = 216000000;
+	gcc_oxili_aon_clk.clkr.hw.init->rate_max[VDD_LOW_L1] = 300000000;
+	gcc_oxili_aon_clk.clkr.hw.init->rate_max[VDD_NOMINAL] = 375000000;
+	gcc_oxili_aon_clk.clkr.hw.init->rate_max[VDD_NOMINAL_L1] = 400000000;
+	gcc_oxili_aon_clk.clkr.hw.init->rate_max[VDD_HIGH] = 475000000;
 
 	gpll3_out_main.vco_table = gpll3_vco_msm8937;
 	gpll3_out_main.num_vco = ARRAY_SIZE(gpll3_vco_msm8937);
