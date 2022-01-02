@@ -11,6 +11,7 @@
  * GNU General Public License for more details.
  */
 
+#include <dt-bindings/clock/msm-clocks-8952.h>
 #include "msm8937-camera-sensor-mtp.dtsi"
 
 &blsp1_uart2 {
