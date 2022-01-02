@@ -6,7 +6,7 @@
 #ifndef __LINUX_OF_CLK_H
 #define __LINUX_OF_CLK_H
 
-#if defined(CONFIG_COMMON_CLK) && defined(CONFIG_OF)
+#if defined(CONFIG_OF)
 
 unsigned int of_clk_get_parent_count(struct device_node *np);
 const char *of_clk_get_parent_name(struct device_node *np, int index);
