@@ -1,5 +1,5 @@
 #include "skeleton64.dtsi"
-#include <dt-bindings/clock/qcom,gcc-sdm429w.h>
+#include <dt-bindings/clock/qcom,gcc-msm8937.h>
 #include <dt-bindings/clock/mdss-28nm-pll-clk-legacy.h>
 #include <dt-bindings/clock/qcom,cpu-sdm.h>
 #include <dt-bindings/clock/qcom,rpmcc.h>
@@ -555,7 +555,7 @@
 	};
 
 	gcc: qcom,gcc@1800000 {
-		compatible = "qcom,gcc-qm215", "syscon";
+		compatible = "qcom,gcc-msm8917", "syscon";
 		reg = <0x1800000 0x80000>,
 			 <0x00a6018 0x00004>;
 		reg-names = "cc_base", "gpu-bin";
@@ -585,7 +585,7 @@
 	};
 
 	gcc_mdss: qcom,gcc-mdss@1800000 {
-		compatible = "qcom,gcc-mdss-qm215";
+		compatible = "qcom,gcc-mdss-msm8917";
 		reg = <0x1800000 0x80000>;
 		clocks = <&mdss_dsi0_pll PCLK_SRC_0_CLK>,
 			<&mdss_dsi0_pll BYTECLK_SRC_0_CLK>;
