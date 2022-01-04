@@ -1,10 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
-/*
- * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
- */
 
-#ifndef _DT_BINDINGS_CLK_QCOM_GCC_SDM429W_H
-#define _DT_BINDINGS_CLK_QCOM_GCC_SDM429W_H
+#ifndef _DT_BINDINGS_CLK_QCOM_GCC_MSM8937_H
+#define _DT_BINDINGS_CLK_QCOM_GCC_MSM8937_H
 
 #define GPLL0_OUT_MAIN			0
 #define GPLL0_OUT_AUX			1
@@ -195,6 +192,7 @@
 #define GCC_GFX_TBU_CLK			186
 #define GCC_GTCU_AHB_CLK		187
 #define GCC_OXILI_GMEM_CLK		188
+#define GCC_IPA_TBU_CLK		189
 
 /* GCC resets */
 #define GCC_CAMSS_MICRO_BCR			0
