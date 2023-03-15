@@ -64,7 +64,6 @@
 #define _FT5526             0x55260402
 #define _FT5526I            0x5526B402
 #define _FT5446             0x54460402
-#define _FT5336             0x53360402
 #define _FT5346             0x53460402
 #define _FT5446I            0x5446B402
 #define _FT5346I            0x5346B402
@@ -129,7 +128,7 @@
 /*
  * choose your ic chip type of focaltech
  */
-#define FTS_CHIP_TYPE   _FT5336
+#define FTS_CHIP_TYPE   _FT3518
 
 /******************* Enables *********************/
 /*********** 1 to enable, 0 to disable ***********/
@@ -150,7 +149,7 @@
  * Report Pressure in multitouch
  * 1:enable(default),0:disable
 */
-#define FTS_REPORT_PRESSURE_EN                  0
+#define FTS_REPORT_PRESSURE_EN                  1
 
 /*
  * Gesture function enable
@@ -184,7 +183,7 @@
 /*
  * auto upgrade
  */
-#define FTS_AUTO_UPGRADE_EN                     0
+#define FTS_AUTO_UPGRADE_EN                     1
 
 /*
  * auto upgrade for lcd cfg
