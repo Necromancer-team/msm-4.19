@@ -137,7 +137,6 @@ struct media_device {
 	u64 topology_version;
 
 	u32 id;
-	u32 entity_id;
 	struct ida entity_internal_idx;
 	int entity_internal_idx_max;
 
