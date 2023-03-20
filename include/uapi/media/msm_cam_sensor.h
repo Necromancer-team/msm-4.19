@@ -156,6 +156,8 @@ enum csid_cfg_type_t {
 	CSID_CFG,
 	CSID_TESTMODE_CFG,
 	CSID_RELEASE,
+	CSID_SECCAM_TOPOLOGY,
+	CSID_SECCAM_RESET,
 };
 
 enum csiphy_cfg_type_t {
