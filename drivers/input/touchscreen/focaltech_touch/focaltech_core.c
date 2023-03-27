@@ -1691,6 +1691,7 @@ static int fts_ts_resume(struct device *dev)
 /*****************************************************************************
 * TP Driver
 *****************************************************************************/
+#ifdef CONFIG_DRM
 static int fts_ts_check_dt(struct device_node *np)
 {
 	int i;
@@ -1714,6 +1715,7 @@ static int fts_ts_check_dt(struct device_node *np)
 
 	return -ENODEV;
 }
+#endif
 
 static int fts_ts_check_default_tp(struct device_node *dt, const char *prop)
 {
@@ -1772,6 +1774,7 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 		return -ENODEV;
 	}
 
+#ifdef CONFIG_DRM
 	if (fts_ts_check_dt(dp)) {
 		if (!fts_ts_check_default_tp(dp, "qcom,i2c-touch-active"))
 			ret = -EPROBE_DEFER;
@@ -1780,6 +1783,7 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 
 		return ret;
 	}
+#endif
 
 	/* malloc memory for global struct variable */
 	ts_data = (struct fts_ts_data *)kzalloc(sizeof(*ts_data), GFP_KERNEL);
