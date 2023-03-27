@@ -649,7 +649,10 @@ static int q6core_get_avcs_fwk_version(void)
 	int ret = 0;
 
 	if (of_machine_is_compatible("qcom,sdm636") ||
-	    of_machine_is_compatible("qcom,sdm660"))
+	    of_machine_is_compatible("qcom,sdm660") ||
+	    of_machine_is_compatible("qcom,msm8917") ||
+	    of_machine_is_compatible("qcom,msm8937") ||
+	    of_machine_is_compatible("qcom,msm8940"))
 		return -EOPNOTSUPP;
 
 	mutex_lock(&(q6core_lcl.ver_lock));
