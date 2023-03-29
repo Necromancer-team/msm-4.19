@@ -16,7 +16,9 @@ subdir-y += lg
 subdir-y += marvell
 subdir-y += mediatek
 subdir-y += nvidia
-subdir-y += qcom
+ifneq ($(CONFIG_OF_IGNORE_QCOM_DTS),y)
+	subdir-y += qcom
+endif
 subdir-y += realtek
 subdir-y += renesas
 subdir-y += rockchip
