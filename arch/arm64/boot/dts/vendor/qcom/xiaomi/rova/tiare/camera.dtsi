@@ -11,32 +11,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-
-&soc {
-		 flash_SGM3780:flashlight {
-			 compatible = "qcom,leds-back-gpio-flash_ulysse";
-			 status = "okay";
-			 pinctrl-names = "flash_default";
-			 pinctrl-0 = <&SGM3780_default>;
-			 qcom,flash-en = <&tlmm 93 0>;
-			 qcom,flash-now = <&tlmm 90 0>;
-			 qcom,op-seq = "flash_en", "flash_now";
-			 qcom,torch-seq-val = <1 0>;
-			 qcom,flash-seq-val = <0 1>;
-			qcom,max-current = <600>;
-			qcom,duration = <1280>;
-			qcom,current = <300>;
-			 linux,name = "flashlight";
-			 linux,default-trigger = "flashlight-trigger";
-		 };
-		 led_flash01: qcom,camera-flash {
-			 cell-index = <0>;
-			 compatible = "qcom,camera-flash";
-			 qcom,flash-type = <3>;
-			 qcom,flash-source = <&flash_SGM3780>;
-			 qcom,torch-source = <&flash_SGM3780>;
-		 };
-};
 &cci {
 	actuator0: qcom,actuator@0 {
 		cell-index = <0>;
@@ -322,7 +296,7 @@
 		qcom,csid-sd-index = <0>;
 		qcom,mount-angle = <90>;
 		qcom,actuator-src = <&actuator0>;
-		qcom,led-flash-src = <&led_flash01>;
+		qcom,led-flash-src = <&led_flash0>;
 		qcom,eeprom-src = <&eeprom0 &eeprom1>;
 		cam_vdig-supply = <&pm8937_l23>;
 		cam_vio-supply = <&pm8937_l6>;

@@ -11,32 +11,6 @@
  * GNU General Public License for more details.
  */
 
-&soc {
-	flash_SGM3780:flashlight {
-		compatible = "qcom,leds-back-gpio-flash_ulysse";
-		status = "okay";
-		pinctrl-names = "flash_default";
-		pinctrl-0 = <&SGM3780_default>;
-		qcom,flash-en = <&tlmm 93 0>;
-		qcom,flash-now = <&tlmm 90 0>;
-		qcom,op-seq = "flash_en", "flash_now";
-		qcom,torch-seq-val = <1 0>;
-		qcom,flash-seq-val = <0 1>;
-		qcom,max-current = <600>;
-		qcom,duration = <1280>;
-		qcom,current = <300>;
-		linux,name = "flashlight";
-		linux,default-trigger = "flashlight-trigger";
-	};
-	led_flash01: qcom,camera-flash {
-		cell-index = <0>;
-		compatible = "qcom,camera-flash";
-		qcom,flash-type = <3>;
-		qcom,flash-source = <&flash_SGM3780>;
-		qcom,torch-source = <&flash_SGM3780>;
-	};
-};
-
 &cci {
 	/delete-node/ qcom,eeprom@0;
 
@@ -298,7 +272,7 @@
 	};
 
 	qcom,camera@0 {
-		qcom,led-flash-src = <&led_flash01>;
+		qcom,led-flash-src = <&led_flash0>;
 		qcom,eeprom-src = <&eeprom5 &eeprom4>;
 		qcom,cam-vreg-min-voltage = <1200000 1800000 2800000 2850000>;
 		qcom,cam-vreg-max-voltage = <1200000 1800000 2800000 2850000>;
