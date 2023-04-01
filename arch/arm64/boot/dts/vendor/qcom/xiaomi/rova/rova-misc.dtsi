@@ -30,6 +30,23 @@
 	};
 };
 
+&cci {
+	led_flash0: qcom,camera-flash {
+		cell-index = <1>;
+		compatible = "qcom,qm215-gpio-flash";
+		gpios = <&tlmm 93 0>,
+			<&tlmm 90 0>;
+		qcom,gpio-req-tbl-num = <0 1>;
+		qcom,gpio-req-tbl-flags = <0 0>;
+		qcom,gpio-flash-en = <0>;
+		qcom,gpio-flash-now = <1>;
+		qcom,gpio-req-tbl-label = "CAM_FLASH", "CAM_TORCH";
+		linux,name = "flashlight";
+		linux,default-trigger = "flashlight-trigger";
+		status = "ok";
+	};
+};
+
 &i2c_2 { /* i2c 2 */
 	tps65132@3e {
 		compatible = "ti,tps65132";
