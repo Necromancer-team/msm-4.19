@@ -14,57 +14,41 @@
 
 /delete-node/ &led_flash0;
 
-&soc {
-	flash_GPIO:flashlight_back {
-		compatible = "qcom,leds-back-gpio-flash_ulysse";
-		status = "okay";
-		pinctrl-names = "flash_default", "flash_sleep";
-		pinctrl-0 = <&cam_flash_front0_default>;
-		pinctrl-1 = <&cam_flash_front0_sleep>;
-		qcom,flash-en = <&tlmm 33 0>;
-		qcom,flash-now = <&tlmm 34 0>;
-		qcom,op-seq = "flash_en", "flash_now";
-		qcom,torch-seq-val = <0 1>;
-		qcom,flash-seq-val = <1 0>;
+&cci {
+	led_flash_back:flashlight_back {
+		cell-index = <1>;
+		compatible = "qcom,qm215-gpio-flash";
+		gpios = <&tlmm 33 0>,
+			<&tlmm 34 0>;
+		qcom,gpio-req-tbl-num = <0 1>;
+		qcom,gpio-req-tbl-flags = <0 0>;
+		qcom,gpio-flash-en = <0>;
+		qcom,gpio-flash-now = <1>;
+		qcom,gpio-req-tbl-label = "CAM_FLASH", "CAM_TORCH";
 		qcom,max-current = <800>;
 		qcom,duration = <1280>;
 		qcom,current = <400>;
 		linux,name = "flashlight";
 		linux,default-trigger = "flashlight-trigger";
+		status = "ok";
 	};
 
-	led_flash_back: qcom,camera-flash@0 {
-		cell-index = <0>;
-		compatible = "qcom,camera-flash";
-		qcom,flash-type = <3>;
-		qcom,flash-source = <&flash_GPIO>;
-		qcom,torch-source = <&flash_GPIO>;
-	};
-
-	flash_front_GPIO:flashlight {
-		compatible = "qcom,leds-gpio-flash_ulysse";
-		status = "okay";
-		pinctrl-names = "flash_default", "flash_sleep";
-		pinctrl-0 = <&cam_flash_front1_default>;
-		pinctrl-1 = <&cam_flash_front1_sleep>;
-		qcom,flash-en = <&tlmm 0 0>;
-		qcom,flash-now = <&tlmm 50 0>;
-		qcom,op-seq = "flash_en";
-		qcom,torch-seq-val = <1 0>;
-		qcom,flash-seq-val = <0 1>;
+	led_flash_front:flashlight {
+		cell-index = <1>;
+		compatible = "qcom,qm215-gpio-flash";
+		gpios = <&tlmm 0 0>,
+			<&tlmm 50 0>;
+		qcom,gpio-req-tbl-num = <0 1>;
+		qcom,gpio-req-tbl-flags = <0 0>;
+		qcom,gpio-flash-en = <0>;
+		qcom,gpio-flash-now = <1>;
+		qcom,gpio-req-tbl-label = "CAM_FLASH", "CAM_TORCH";
 		qcom,max-current = <1000>;
 		qcom,duration = <1280>;
 		qcom,current = <625>;
 		linux,name = "flashlight-front";
 		linux,default-trigger = "F_flashlight-trigger";
-	};
-
-	led_flash_front: qcom,camera-flash@2 {
-		cell-index = <2>;
-		compatible = "qcom,camera-flash";
-		qcom,flash-type = <3>;
-		qcom,flash-source = <&flash_front_GPIO>;
-		qcom,torch-source = <&flash_front_GPIO>;
+		status = "disabled";
 	};
 };
 
@@ -697,13 +681,13 @@
 		qcom,sensor-position = <1>;
 		qcom,sensor-mode = <0>;
 		qcom,cci-master = <1>;
-		clocks = <&gcc 0xa73cad0c>,
-				<&gcc 0x5002d85f>;
+		clocks = <&gcc MCLK1_CLK_SRC>,
+				<&gcc GCC_CAMSS_MCLK1_CLK>;
 		clock-names = "cam_src_clk", "cam_clk";
 		qcom,clock-rates = <24000000 0>;
 	};
 
-	qcom,camera@2 { /* ugg front camera */
+	camera2: qcom,camera@2 { /* ugg front camera */
 		cell-index = <2>;
 		compatible = "qcom,camera";
 		reg = <0x2>;
@@ -746,5 +730,6 @@
 				<&gcc GCC_CAMSS_MCLK1_CLK>;
 		clock-names = "cam_src_clk", "cam_clk";
 		qcom,clock-rates = <24000000 0>;
+		status = "disabled";
 	};
 };

@@ -14,3 +14,11 @@
 
 #include "camera-revert.dtsi"
 #include "fingerprint.dtsi"
+
+&led_flash_front {
+    status = "ok";
+};
+
+&camera2 {
+    status = "ok";
+};
