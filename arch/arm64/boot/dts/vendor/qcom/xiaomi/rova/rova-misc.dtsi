@@ -12,12 +12,16 @@
  * GNU General Public License for more details.
  */
 
+#include <dt-bindings/leds/common.h>
+
 &i2c_2  {
 	aw2013@45 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
 		compatible = "awinic,aw2013";
 		reg = <0x45>;
-		vdd-supply = <&pm8937_l10>; //Power supply needed to power up the device
-		vcc-supply = <&pm8937_l5>; //Power source required to power up i2c bus
+		vcc-supply = <&pm8937_l10>;
 	};
 };
 
