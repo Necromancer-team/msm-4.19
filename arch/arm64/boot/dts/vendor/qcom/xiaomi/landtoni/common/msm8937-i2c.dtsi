@@ -1,40 +1,36 @@
+#include <dt-bindings/leds/common.h>
+
 &i2c_2  {
 	status = "okay";
 	aw2013@45 {
-		compatible = "awinic,aw2013";
-		reg = <0x45>;
-		vdd-supply = <&pm8937_l10>; //Power supply needed to power up the device
-		vcc-supply = <&pm8937_l5>; //Power source required to power up i2c bus
+		#address-cells = <1>;
+		#size-cells = <0>;
 
-		aw2013,red {
-			aw2013,name = "red";
-			aw2013,id = <0>;
-			aw2013,max-brightness = <255>;
-			aw2013,max-current = <1>;
-			aw2013,rise-time-ms = <2>;
-			aw2013,hold-time-ms = <1>;
-			aw2013,fall-time-ms = <2>;
-			aw2013,off-time-ms = <1>;
+		compatible = "awinic,aw2013";
+
+		reg = <0x45>;
+		vcc-supply = <&pm8937_l10>;
+
+		led@0 {
+			reg = <0>;
+			led-max-microamp = <5000>;
+			function = LED_FUNCTION_INDICATOR;
+			color = <LED_COLOR_ID_RED>;
+			label = "red";
 		};
-		aw2013,green {
-			aw2013,name = "green";
-			aw2013,id = <1>;
-			aw2013,max-brightness = <255>;
-			aw2013,max-current = <1>;
-			aw2013,rise-time-ms = <2>;
-			aw2013,hold-time-ms = <1>;
-			aw2013,fall-time-ms = <2>;
-			aw2013,off-time-ms = <1>;
+		led@1 {
+			reg = <1>;
+			led-max-microamp = <5000>;
+			function = LED_FUNCTION_INDICATOR;
+			color = <LED_COLOR_ID_GREEN>;
+			label = "green";
 		};
-		aw2013,blue {
-			aw2013,name = "blue";
-			aw2013,id = <2>;
-			aw2013,max-brightness = <255>;
-			aw2013,max-current = <1>;
-			aw2013,rise-time-ms = <2>;
-			aw2013,hold-time-ms = <1>;
-			aw2013,fall-time-ms = <2>;
-			aw2013,off-time-ms = <1>;
+		led@2 {
+			reg = <2>;
+			led-max-microamp = <5000>;
+			function = LED_FUNCTION_INDICATOR;
+			color = <LED_COLOR_ID_BLUE>;
+			label = "blue";
 		};
 	};
     pericom-type-c@1d {

@@ -1,3 +1,5 @@
+#include <dt-bindings/leds/common.h>
+
 &i2c_5 {
 	status = "disabled";
 };
@@ -9,42 +11,34 @@
 &i2c_2 {
 	status = "ok";
 	aw2013@45 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
 		compatible = "awinic,aw2013";
+
 		reg = <0x45>;
-		vdd-supply = <&pm8937_l10>;
-		vcc-supply = <&pm8937_l6>;
+		vcc-supply = <&pm8937_l10>;
 
-		aw2013,red {
-			aw2013,name = "red";
-			aw2013,id = <0x0>;
-			aw2013,max-brightness = <0xff>;
-			aw2013,max-current = <0x2>;
-			aw2013,rise-time-ms = <0x4>;
-			aw2013,hold-time-ms = <0x0>;
-			aw2013,fall-time-ms = <0x4>;
-			aw2013,off-time-ms = <0x4>;
+		led@0 {
+			reg = <0>;
+			led-max-microamp = <5000>;
+			function = LED_FUNCTION_INDICATOR;
+			color = <LED_COLOR_ID_RED>;
+			label = "red";
 		};
-
-		aw2013,green {
-			aw2013,name = "green";
-			aw2013,id = <0x1>;
-			aw2013,max-brightness = <0xff>;
-			aw2013,max-current = <0x2>;
-			aw2013,rise-time-ms = <0x4>;
-			aw2013,hold-time-ms = <0x0>;
-			aw2013,fall-time-ms = <0x4>;
-			aw2013,off-time-ms = <0x4>;
+		led@1 {
+			reg = <1>;
+			led-max-microamp = <5000>;
+			function = LED_FUNCTION_INDICATOR;
+			color = <LED_COLOR_ID_GREEN>;
+			label = "green";
 		};
-
-		aw2013,blue {
-			aw2013,name = "blue";
-			aw2013,id = <0x2>;
-			aw2013,max-brightness = <0xff>;
-			aw2013,max-current = <0x2>;
-			aw2013,rise-time-ms = <0x4>;
-			aw2013,hold-time-ms = <0x0>;
-			aw2013,fall-time-ms = <0x4>;
-			aw2013,off-time-ms = <0x4>;
+		led@2 {
+			reg = <2>;
+			led-max-microamp = <5000>;
+			function = LED_FUNCTION_INDICATOR;
+			color = <LED_COLOR_ID_BLUE>;
+			label = "blue";
 		};
 	};
 };
