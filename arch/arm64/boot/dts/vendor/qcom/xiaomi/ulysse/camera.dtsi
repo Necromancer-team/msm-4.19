@@ -120,8 +120,8 @@
 		qcom,cam-power-seq-cfg-val = <1 1 1 1 24000000 1 1>;
 		qcom,cam-power-seq-delay = <0 0 0 0 5 5 5>;
 		status = "ok";
-		clocks = <&gcc 0x266b3853>,
-				<&gcc 0x80902deb>;
+		clocks = <&gcc MCLK0_CLK_SRC>,
+				<&gcc GCC_CAMSS_MCLK0_CLK>;
 		clock-names = "cam_src_clk", "cam_clk";
 		qcom,clock-rates = <19200000 0>;
 	};
@@ -192,8 +192,8 @@
 		qcom,cam-power-seq-cfg-val = <1 1 1 1 24000000 1 1>;
 		qcom,cam-power-seq-delay = <0 0 0 0 5 5 5>;
 		status = "ok";
-		clocks = <&gcc 0x266b3853>,
-				<&gcc 0x80902deb>;
+		clocks = <&gcc MCLK0_CLK_SRC>,
+				<&gcc GCC_CAMSS_MCLK0_CLK>;
 		clock-names = "cam_src_clk", "cam_clk";
 		qcom,clock-rates = <19200000 0>;
 	};
@@ -239,8 +239,8 @@
 		qcom,sensor-position = <1>;
 		qcom,sensor-mode = <0>;
 		status = "ok";
-		clocks = <&gcc 0xa73cad0c>,
-				<&gcc 0x5002d85f>;
+		clocks = <&gcc MCLK1_CLK_SRC>,
+				<&gcc GCC_CAMSS_MCLK1_CLK>;
 		clock-names = "cam_src_clk", "cam_clk";
 		qcom,clock-rates = <19200000 0>;
 	};
@@ -290,8 +290,8 @@
 		qcom,sensor-position = <1>;
 		qcom,sensor-mode = <0>;
 		status = "ok";
-		clocks = <&gcc 0xa73cad0c>,
-				<&gcc 0x5002d85f>;
+		clocks = <&gcc MCLK1_CLK_SRC>,
+				<&gcc GCC_CAMSS_MCLK1_CLK>;
 		clock-names = "cam_src_clk", "cam_clk";
 		qcom,clock-rates = <19200000 0>;
 	};
@@ -442,8 +442,8 @@
 		qcom,cam-power-seq-cfg-val = <0 0 1 1 1 24000000 1 1>;
 		qcom,cam-power-seq-delay = <1 1 5 5 5 1 10 10>;
 		status = "ok";
-		clocks = <&gcc 0xa73cad0c>,
-			<&gcc 0x5002d85f>;
+		clocks = <&gcc MCLK1_CLK_SRC>,
+			<&gcc GCC_CAMSS_MCLK1_CLK>;
 		clock-names = "cam_src_clk", "cam_clk";
 		qcom,clock-rates = <19200000 0>;
 	};
@@ -596,8 +596,8 @@
 		qcom,cam-power-seq-cfg-val = <0 0 1 1 1 24000000 1 1>;
 		qcom,cam-power-seq-delay = <1 1 5 5 5 1 10 10>;
 		status = "ok";
-		clocks = <&gcc 0xa73cad0c>,
-			<&gcc 0x5002d85f>;
+		clocks = <&gcc MCLK1_CLK_SRC>,
+			<&gcc GCC_CAMSS_MCLK1_CLK>;
 		clock-names = "cam_src_clk", "cam_clk";
 		qcom,clock-rates = <19200000 0>;
 	};
