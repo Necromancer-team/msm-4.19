@@ -645,7 +645,7 @@
 		qcom,clock-rates = <24000000 0>;
 	};
 
-	qcom,camera@1 { /* ugglite front camera */
+	camera_ugglite: qcom,camera@1 { /* ugglite front camera */
 		cell-index = <1>;
 		compatible = "qcom,camera";
 		reg = <0x1>;
@@ -687,7 +687,7 @@
 		qcom,clock-rates = <24000000 0>;
 	};
 
-	camera2: qcom,camera@2 { /* ugg front camera */
+	camera_ugg: qcom,camera@2 { /* ugg front camera */
 		cell-index = <2>;
 		compatible = "qcom,camera";
 		reg = <0x2>;
