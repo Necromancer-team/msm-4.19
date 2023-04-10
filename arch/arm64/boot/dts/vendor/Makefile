@@ -5,3 +5,5 @@ ifneq "$(wildcard $(vendor)/qcom)" ""
 		subdir-y += qcom
 	endif
 endif
+
+subdir-y += xiaomi-msm8937
