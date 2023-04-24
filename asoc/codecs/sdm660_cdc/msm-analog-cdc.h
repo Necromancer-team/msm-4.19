@@ -202,6 +202,8 @@ struct sdm660_cdc_priv {
 	/* cal info for codec */
 	struct fw_info *fw_data;
 	struct notifier_block audio_ssr_nb;
+	int (*codec_hph_pa_gpio_cb)(struct snd_soc_component *component,
+					int enable);
 	int (*codec_spk_ext_pa_cb)(struct snd_soc_component *component,
 					int enable);
 	unsigned long status_mask;
@@ -228,6 +230,9 @@ extern int msm_anlg_cdc_hs_detect(struct snd_soc_component *component,
 		    struct wcd_mbhc_config *mbhc_cfg);
 extern void msm_anlg_cdc_hs_detect_exit(struct snd_soc_component *component);
 extern void msm_anlg_cdc_update_int_spk_boost(bool enable);
+extern void msm_anlg_cdc_hph_pa_gpio_cb(
+		int (*codec_hph_pa_gpio)(struct snd_soc_component *component,
+		int enable), struct snd_soc_component *component);
 extern void msm_anlg_cdc_spk_ext_pa_cb(
 		int (*codec_spk_ext_pa)(struct snd_soc_component *component,
 		int enable), struct snd_soc_component *component);
@@ -250,6 +255,12 @@ static inline void msm_anlg_cdc_hs_detect_exit(
 
 }
 static inline void msm_anlg_cdc_update_int_spk_boost(bool enable)
+{
+
+}
+static inline void msm_anlg_cdc_hph_pa_gpio_cb(
+		int (*codec_hph_pa_gpio)(struct snd_soc_component *component,
+		int enable), struct snd_soc_component *codec)
 {
 
 }
