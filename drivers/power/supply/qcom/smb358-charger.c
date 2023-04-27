@@ -972,6 +972,7 @@ static int smb358_get_prop_batt_present(struct smb358_charger *chip)
 	return !chip->battery_missing;
 }
 
+static struct power_supply *cw2015_psy;
 static int smb358_get_prop_batt_capacity(struct smb358_charger *chip)
 {
 	union power_supply_propval ret = {0, };
@@ -979,12 +980,16 @@ static int smb358_get_prop_batt_capacity(struct smb358_charger *chip)
 	if (chip->fake_battery_soc >= 0)
 		return chip->fake_battery_soc;
 
-#ifdef CONFIG_MACH_XIAOMI_ROLEX
-	if (!chip->bms_psy)
-		chip->bms_psy = power_supply_get_by_name("rk-bat");
-#endif
 	if (chip->bms_psy) {
 		power_supply_get_property(chip->bms_psy,
+				POWER_SUPPLY_PROP_CAPACITY, &ret);
+		return ret.intval;
+	}
+
+	if (!cw2015_psy)
+		cw2015_psy = power_supply_get_by_name("rk-bat");
+	if (cw2015_psy) {
+		power_supply_get_property(cw2015_psy,
 				POWER_SUPPLY_PROP_CAPACITY, &ret);
 		return ret.intval;
 	}
@@ -1098,12 +1103,10 @@ int smb358_get_prop_battid_resister(struct smb358_charger *chip)
 static int smb358_get_prop_battery_voltage_now(struct smb358_charger *chip)
 {
 	union power_supply_propval ret = {0, };
-#ifdef CONFIG_MACH_XIAOMI_ROLEX
-	if (!chip->bms_psy)
-		chip->bms_psy = power_supply_get_by_name("rk-bat");
-#endif
-	if (chip->bms_psy) {
-		power_supply_get_property(chip->bms_psy,
+	if (!cw2015_psy)
+		cw2015_psy = power_supply_get_by_name("rk-bat");
+	if (cw2015_psy) {
+		power_supply_get_property(cw2015_psy,
 				POWER_SUPPLY_PROP_VOLTAGE_NOW, &ret);
 		return ret.intval;
 	}
