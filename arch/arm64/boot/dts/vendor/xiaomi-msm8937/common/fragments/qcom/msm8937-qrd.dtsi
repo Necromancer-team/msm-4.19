@@ -11,8 +11,8 @@
  * GNU General Public License for more details.
  */
 
-#include "qcom/msm8937-pinctrl.dtsi"
-//#include "qcom/msm8937-camera-sensor-qrd.dtsi"
+#include "../../../../qcom/msm8937-pinctrl.dtsi"
+//#include "../../../../qcom/msm8937-camera-sensor-qrd.dtsi"
 
 &soc {
 	gpio_keys {
