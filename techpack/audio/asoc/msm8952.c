@@ -23,6 +23,9 @@
 #include <asoc/msm-cdc-pinctrl.h>
 #include "msm8952.h"
 #include "msm-pcm-voice-v2.h"
+#if IS_ENABLED(CONFIG_MACH_XIAOMI_MSM8937)
+#include <xiaomi-msm8937/mach.h>
+#endif
 
 #define DRV_NAME "msm8952-asoc-wcd"
 
@@ -373,6 +376,134 @@ static int config_hph_compander_gpio(bool enable,
 
 done:
 	return ret;
+}
+
+int is_hph_pa_gpio_support(struct platform_device *pdev,
+			struct msm_asoc_mach_data *pdata)
+{
+	const char *hph_pa_gpio_p = "qcom,msm-hph-pa-pinctrl";
+
+	pr_debug("%s:Enter\n", __func__);
+
+	pdata->hph_pa_gpio_p = of_parse_phandle(pdev->dev.of_node,
+							hph_pa_gpio_p, 0);
+
+	if (!pdata->hph_pa_gpio_p) {
+		dev_err(&pdev->dev,
+			"%s: missing %s in dt node\n", __func__, hph_pa_gpio_p);
+	}
+	return 0;
+}
+
+static int get_hph_pa_gpio(struct snd_soc_component *component)
+{
+	struct snd_soc_card *card = component->card;
+	struct msm_asoc_mach_data *pdata = snd_soc_card_get_drvdata(card);
+
+	if (!pdata->hph_pa_gpio_p) {
+		pr_err("%s: Invalid headphone PA pinctrl phandle\n", __func__);
+		return false;
+	}
+
+	return msm_cdc_pinctrl_get_state(pdata->hph_pa_gpio_p);
+}
+
+static int set_hph_pa_gpio(struct snd_soc_component *component, int enable)
+{
+	struct snd_soc_card *card = component->card;
+	struct msm_asoc_mach_data *pdata = snd_soc_card_get_drvdata(card);
+	int ret;
+
+	if (!pdata->hph_pa_gpio_p) {
+		pr_err("%s: Invalid headphone PA pinctrl phandle\n", __func__);
+		return false;
+	}
+
+	pr_info("%s: %s headphone PA gpio set\n", __func__,
+		enable ? "Enable" : "Disable");
+
+	if (enable) {
+		ret =  msm_cdc_pinctrl_select_active_state(
+					pdata->hph_pa_gpio_p);
+		if (ret) {
+			pr_err("%s: headphone PA gpio set cannot be enabled\n",
+					__func__);
+			return ret;
+		}
+	} else {
+		ret = msm_cdc_pinctrl_select_sleep_state(
+				pdata->hph_pa_gpio_p);
+		if (ret) {
+			pr_err("%s: headphone PA gpio set cannot be disabled\n",
+					__func__);
+			return ret;
+		}
+	}
+	return 0;
+}
+
+int is_spk_pa_gpio_support(struct platform_device *pdev,
+			struct msm_asoc_mach_data *pdata)
+{
+	const char *spk_pa_gpio_p = "qcom,msm-spk-pa-pinctrl";
+
+	pr_debug("%s:Enter\n", __func__);
+
+	pdata->spk_pa_gpio_p = of_parse_phandle(pdev->dev.of_node,
+							spk_pa_gpio_p, 0);
+
+	if (!pdata->spk_pa_gpio_p) {
+		dev_err(&pdev->dev,
+			"%s: missing %s in dt node\n", __func__, spk_pa_gpio_p);
+	}
+	return 0;
+}
+
+static int get_spk_pa_gpio(struct snd_soc_component *component)
+{
+	struct snd_soc_card *card = component->card;
+	struct msm_asoc_mach_data *pdata = snd_soc_card_get_drvdata(card);
+
+	if (!pdata->spk_pa_gpio_p) {
+		pr_err("%s: Invalid speaker PA pinctrl phandle\n", __func__);
+		return false;
+	}
+
+	return msm_cdc_pinctrl_get_state(pdata->spk_pa_gpio_p);
+}
+
+static int set_spk_pa_gpio(struct snd_soc_component *component, int enable)
+{
+	struct snd_soc_card *card = component->card;
+	struct msm_asoc_mach_data *pdata = snd_soc_card_get_drvdata(card);
+	int ret;
+
+	if (!pdata->spk_pa_gpio_p) {
+		pr_err("%s: Invalid speaker PA pinctrl phandle\n", __func__);
+		return false;
+	}
+
+	pr_info("%s: %s speaker PA gpio set\n", __func__,
+		enable ? "Enable" : "Disable");
+
+	if (enable) {
+		ret =  msm_cdc_pinctrl_select_active_state(
+					pdata->spk_pa_gpio_p);
+		if (ret) {
+			pr_err("%s: speaker PA gpio set cannot be enabled\n",
+					__func__);
+			return ret;
+		}
+	} else {
+		ret = msm_cdc_pinctrl_select_sleep_state(
+				pdata->spk_pa_gpio_p);
+		if (ret) {
+			pr_err("%s: speaker PA gpio set cannot be disabled\n",
+					__func__);
+			return ret;
+		}
+	}
+	return 0;
 }
 
 int is_ext_spk_gpio_support(struct platform_device *pdev,
@@ -1598,7 +1729,9 @@ static void *def_msm8952_wcd_mbhc_cal(void)
 		return NULL;
 
 #define S(X, Y) ((WCD_MBHC_CAL_PLUG_TYPE_PTR(msm8952_wcd_cal)->X) = (Y))
-	S(v_hs_max, 1500);
+/*--- +bug 264424 ,zhanghao,modify,20170522,fix is  can not identfiy headset  --*/
+/*--- +bug 329872 ,yangrun,modify,20171229,fix the problem that delay identfiy headset --*/
+	S(v_hs_max, 1700);
 #undef S
 #define S(X, Y) ((WCD_MBHC_CAL_BTN_DET_PTR(msm8952_wcd_cal)->X) = (Y))
 	S(num_btn, WCD_MBHC_DEF_BUTTONS);
@@ -1631,6 +1764,38 @@ static void *def_msm8952_wcd_mbhc_cal(void)
 	btn_high[3] = 450;
 	btn_low[4] = 500;
 	btn_high[4] = 500;
+
+#if IS_ENABLED(CONFIG_MACH_XIAOMI_MSM8937)
+	switch (xiaomi_msm8937_mach_get()) {
+		case XIAOMI_MSM8937_MACH_UGG:
+		case XIAOMI_MSM8937_MACH_UGGLITE:
+			btn_low[0] = 100;
+			btn_high[0] = 100;
+			btn_low[1] = 200;
+			btn_high[1] = 200;
+			btn_low[2] = 450;
+			btn_high[2] = 450;
+			btn_low[3] = 500;
+			btn_high[3] = 500;
+			break;
+		case XIAOMI_MSM8937_MACH_LAND:
+		case XIAOMI_MSM8937_MACH_RIVA:
+		case XIAOMI_MSM8937_MACH_ROLEX:
+		case XIAOMI_MSM8937_MACH_SANTONI:
+		case XIAOMI_MSM8937_MACH_TIARE:
+			btn_low[0] = 25;
+			btn_low[1] = 200;
+			btn_high[1] = 225;
+			btn_low[2] = 325;
+			btn_high[2] = 450;
+			btn_low[3] = 500;
+			btn_high[3] = 510;
+			btn_low[4] = 530;
+			btn_high[4] = 540;
+		default:
+			break;
+	}
+#endif
 
 	return msm8952_wcd_cal;
 }
@@ -1685,6 +1850,8 @@ static int msm_audrx_init(struct snd_soc_pcm_runtime *rtd)
 
 	snd_soc_dapm_sync(dapm);
 
+	msm_anlg_cdc_hph_pa_gpio_cb(get_hph_pa_gpio, set_hph_pa_gpio, ana_cdc);
+	msm_anlg_cdc_spk_pa_gpio_cb(get_spk_pa_gpio, set_spk_pa_gpio, ana_cdc);
 	msm_anlg_cdc_spk_ext_pa_cb(enable_spk_ext_pa, ana_cdc);
 	msm_dig_cdc_hph_comp_cb(config_hph_compander_gpio, dig_cdc);
 
@@ -3487,7 +3654,15 @@ parse_mclk_freq:
 
 	pdata->dmic_gpio_p = of_parse_phandle(pdev->dev.of_node,
 					"qcom,cdc-dmic-gpios", 0);
-
+	
+	ret = is_hph_pa_gpio_support(pdev, pdata);
+	if (ret < 0)
+		pr_err("%s:  doesn't support headphone pa gpio set\n",
+				__func__);
+	ret = is_spk_pa_gpio_support(pdev, pdata);
+	if (ret < 0)
+		pr_err("%s:  doesn't support speaker pa gpio set\n",
+				__func__);
 	ret = is_ext_spk_gpio_support(pdev, pdata);
 	if (ret < 0)
 		pr_err("%s:  doesn't support external speaker pa\n",
